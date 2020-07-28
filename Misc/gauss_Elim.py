@@ -32,8 +32,8 @@ def gaussElim(dim):
           it is considered to be equal to zero. 
           """
           # prompt for input. We want A and b
-          A = list(input("Enter matrix A ({}x{}) as a list: ".format(dim,dim)))
-          b = list(input("Enter column vector b ({}x1) as a list: ".format(dim)))
+          A = input("Enter matrix A ({}x{}) as a list: ".format(dim,dim))
+          b = input("Enter column vector b ({}x1) as a list: ".format(dim))
           
           # Matrix of coefficients
           A = np.array(A).reshape((dim, dim))
