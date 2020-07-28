@@ -7,18 +7,18 @@ Gaussian Elimination: A Toy Example (3x3 system)
 import numpy as np
 import sys
 
-def gaussElim(dim,A,b):
+def gaussElim(dim):
           """ 
           Inputs:
           - dim (integer): Dimension of the matrix (if you enter 3, it means a 3x3 matrix)
           - A (real): Matrix of coefficients (has to be a square matrix and 3x3 or lower)
                          Enter A as a list starting from A11 and proceeding row-wise
                          (e.g. The 2x3 matrix [1 2 3; 4 5 6] would be entered
-                          as [1 2 3 4 5 6])
+                          as [1,2,3,4,5,6])
           - b (real): Coefficients on the right hand side in Ax = b
                          Enter b as a list starting from b11 and proceeding 
                          down the column (e.g. The 3x1 column [1; 2; 3] 
-                                        would be entered as [1 2 3])
+                                        would be entered as [1,2,3])
           
           Output: 
           - The final form of the augmented matrix, [U|b]
@@ -32,8 +32,8 @@ def gaussElim(dim,A,b):
           it is considered to be equal to zero. 
           """
           # prompt for input. We want A and b
-          A = input(list("Enter matrix A (3x3 or lower) as a list: "))
-          b = input(list("Enter column vector b as a list: "))
+          A = list(input("Enter matrix A ({}x{}) as a list: ".format(dim,dim)))
+          b = list(input("Enter column vector b ({}x1) as a list: ".format(dim)))
           
           # Matrix of coefficients
           A = np.array(A).reshape((dim, dim))
@@ -108,4 +108,5 @@ def gaussElim(dim,A,b):
           # Print solution
           print("Solution is: x = {:.2f}, y = {:.2f}, z = {:.2f}".format(x,y,z))
                
+          return
           
