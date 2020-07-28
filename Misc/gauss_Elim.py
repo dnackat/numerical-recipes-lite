@@ -17,8 +17,8 @@ def gaussElim(dim,A,b):
                           as [1 2 3 4 5 6])
           - b (real): Coefficients on the right hand side in Ax = b
                          Enter b as a list starting from b11 and proceeding 
-                         down the rows (e.g. The 2x3 matrix [1 2 3; 4 5 6] 
-                                        would be entered as [1 2 3 4 5 6])
+                         down the column (e.g. The 3x1 column [1; 2; 3] 
+                                        would be entered as [1 2 3])
           
           Output: 
           - The final form of the augmented matrix, [U|b]
@@ -31,7 +31,10 @@ def gaussElim(dim,A,b):
           1x10^-8 i.e. if the absolute value of an entry is less than 1x10^-8, 
           it is considered to be equal to zero. 
           """
-     
+          # prompt for input. We want A and b
+          A = input(list("Enter matrix A (3x3 or lower) as a list: "))
+          b = input(list("Enter column vector b as a list: "))
+          
           # Matrix of coefficients
           A = np.array(A).reshape((dim, dim))
           
