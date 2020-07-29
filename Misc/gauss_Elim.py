@@ -2,7 +2,7 @@
 """
 Spyder Editor
 
-Gaussian Elimination: A Toy Example (square systems of dimension 3 or lower)
+Gaussian Elimination: A Toy Example (for square systems of dimension 3 or lower)
 """
 import numpy as np
 import string
@@ -46,6 +46,10 @@ def gaussElim(dim):
                int(dim)
           except ValueError:
                sys.exit("Please enter a valid integer for dimension.")
+          else:
+               if dim < 2 or dim > 3:
+                    print("Dimension too low or too high. Check function help and try again.")
+                    return
           
           # Messages for A and b inputs
           msg_A = "Enter matrix A (square with dimension 3 or lower) as a series of numbers separated by a space. Start from the first element and proceed row-wise.\n"
@@ -169,16 +173,23 @@ def gaussElim(dim):
           # Matrix output               
           print("Upper triangular (augmented) matrix, [U|b]:\n", AUG)
           
-          # Calculate solution
-          for i in range(dim-1):
-               x =np.zeros((2,1))
-          z = AUG[AUG.shape[0]-1,AUG.shape[1]-1]/AUG[AUG.shape[0]-1,AUG.shape[1]-2]
-          y = (AUG[AUG.shape[0]-2,AUG.shape[1]-1] - \
-               z*AUG[AUG.shape[0]-2,AUG.shape[1]-2])/AUG[AUG.shape[0]-2,AUG.shape[1]-3]
-          x = (AUG[AUG.shape[0]-3,AUG.shape[1]-1] - z*AUG[AUG.shape[0]-3,AUG.shape[1]-2] \
-               - y*AUG[AUG.shape[0]-3,AUG.shape[1]-3])/AUG[AUG.shape[0]-3,AUG.shape[1]-4]
+          ### Calculate solution by back substitution ###
+          x = np.zeros(dim-1)
+          # Iterate in reverse for back substitution
+          for i in range(dim-1,-1,-1):
+               if i == dim-1:
+                    x[i] = AUG[i,-1]/AUG[i,-2]
+               else:
+                    x[i] = (AUG[i,-1] - np.dot(AUG[i,i+1:],x[i+1:]))/AUG[i,i]
+                    
+          # z = AUG[AUG.shape[0]-1,AUG.shape[1]-1]/AUG[AUG.shape[0]-1,AUG.shape[1]-2]
+          # y = (AUG[AUG.shape[0]-2,AUG.shape[1]-1] - \
+          #      z*AUG[AUG.shape[0]-2,AUG.shape[1]-2])/AUG[AUG.shape[0]-2,AUG.shape[1]-3]
+          # x = (AUG[AUG.shape[0]-3,AUG.shape[1]-1] - z*AUG[AUG.shape[0]-3,AUG.shape[1]-2] \
+          #      - y*AUG[AUG.shape[0]-3,AUG.shape[1]-3])/AUG[AUG.shape[0]-3,AUG.shape[1]-4]
                
           # Print solution
+          for i in range()
           print("Solution is: x = {:.2f}, y = {:.2f}, z = {:.2f}".format(x,y,z))
                
           return
