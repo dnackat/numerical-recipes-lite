@@ -13,12 +13,12 @@ def gaussElim(dim):
           - dim (integer): Dimension of the matrix (if you enter 3, it means a 3x3 matrix)
           - A (real): Matrix of coefficients (has to be a square matrix and 3x3 or lower)
                          Enter A as a series of numbers separated by single spaces 
-                         starting from A11 and proceeding row-wise
+                         starting from A[1,1] and proceeding row-wise
                          (e.g. The 2x2 matrix [1 2 
                                                4 5] would be entered
-                          as 1 2 3 4)
+                          as 1 2 4 5)
           - b (real): Coefficients on the right hand side in Ax = b
-                         Enter b as a series of numbers starting from b11 and 
+                         Enter b as a series of numbers starting from b[1,1] and 
                          proceeding down the column 
                          (e.g. The 3x1 column [1 
                                                2 
@@ -29,12 +29,14 @@ def gaussElim(dim):
           - The final form of the augmented matrix, [U|b]
           - Solution for the system, if it exists
           
-          This function performs Gaussian elimination on 3x3 matrices and
-          calculates the soluion for the system provided the matrix is 
-          non-singular. It has the capability to do row exchanges whenever they
-          are necessary. The tolerance used to check if a quanitity is zero is
-          1x10^-8 i.e. if the absolute value of an entry is less than 1x10^-8, 
-          it is considered to be equal to zero. 
+          Description:
+          This function performs Gaussian elimination on square matrices of 
+          dimension 3 or lower and calculates the soluion for the system provided 
+          the matrix is non-singular. It has the capability to do row exchanges 
+          whenever they are necessary. The tolerance used to check if a quanitity 
+          is zero is 1x10^-8 i.e. if the absolute value of an entry is less than 1x10^-8, 
+          it is considered to be equal to zero. Also, row exchanges will only 
+          be done if the element below is greater than 1x10^-5. 
           """
           ### Input handling ###
           
