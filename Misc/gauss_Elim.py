@@ -12,13 +12,18 @@ def gaussElim(dim):
           Inputs:
           - dim (integer): Dimension of the matrix (if you enter 3, it means a 3x3 matrix)
           - A (real): Matrix of coefficients (has to be a square matrix and 3x3 or lower)
-                         Enter A as a list starting from A11 and proceeding row-wise
-                         (e.g. The 2x3 matrix [1 2 3; 4 5 6] would be entered
-                          as [1,2,3,4,5,6])
+                         Enter A as a series of numbers separated by single spaces 
+                         starting from A11 and proceeding row-wise
+                         (e.g. The 2x2 matrix [1 2 
+                                               4 5] would be entered
+                          as 1 2 3 4)
           - b (real): Coefficients on the right hand side in Ax = b
-                         Enter b as a list starting from b11 and proceeding 
-                         down the column (e.g. The 3x1 column [1; 2; 3] 
-                                        would be entered as [1,2,3])
+                         Enter b as a series of numbers starting from b11 and 
+                         proceeding down the column 
+                         (e.g. The 3x1 column [1 
+                                               2 
+                                               3] 
+                          would be entered as 1 2 3)
           
           Output: 
           - The final form of the augmented matrix, [U|b]
