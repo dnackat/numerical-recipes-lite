@@ -64,7 +64,9 @@ def gaussElim(dim):
                
                # Check if A is okay
                try:
-                    A = list(map(float, A.replace(string.punctuation," ").split(" ")))
+                    A = list(map(float, \
+                        A.translate(str.maketrans('', '', \
+                                        string.punctuation)).split(" ")))
                except:
                     print("Invalid input for A. Check help for accepted input types.")
                     inp = input("Do you want to try again? y or n: \n")
@@ -79,7 +81,9 @@ def gaussElim(dim):
                
                # Check if b is okay
                try:
-                    b = list(map(float, b.replace(string.punctuation," ").split(" ")))
+                    b = list(map(float, \
+                        b.translate(str.maketrans('', '', \
+                                        string.punctuation)).split(" ")))
                     break
                except:
                     print("Invalid input for b. Check help for accepted input types.")
