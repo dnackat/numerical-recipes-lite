@@ -32,7 +32,7 @@ def gaussElim(dim):
           
           Description:
           This function performs Gaussian elimination on square matrices of 
-          dimension 3 or lower and calculates the soluion for the system provided 
+          dimension 3 or lower and calculates the soluion for the system Ax = b provided 
           the matrix is non-singular. It has the capability to do row exchanges 
           whenever they are necessary. The tolerance used to check if a quanitity 
           is zero is 1x10^-8 i.e. if the absolute value of an entry is less than 1x10^-8, 
@@ -47,26 +47,59 @@ def gaussElim(dim):
                     and proceed row-wise."
           msg_b = "Enter column vector b as a series of numbers separated by a \
                     space. Start from the first element proceed row-wise."
-                    
-          A = input(msg_A)
-          b = input(msg_b)
           
           ### Input Error handling ###
-          response = True
-          while response:
+          while True:
+               A = input(msg_A)
+               b = input(msg_b)
+               
+               # Check if A is okay
                try:
-                    list(map(float, A.replace(string.punctuation," ").split(" ")))
+                    A = list(map(float, A.replace(string.punctuation," ").split(" ")))
+                    break
                except:
                     print("Invalid input for A. Check help for accepted input types.")
                     inp = input("Do you want to try again? y or n: ")
+                    if inp == "y":
+                         continue
+                    if inp == "n":
+                         print("Goodbye!")
+                         sys.exit(0)
+                    else:
+                         print("I didn't understand that. Goodbye!")
+                         sys.exit(0)
+               
+               # Check if b is okay
+               try:
+                    A = list(map(float, b.replace(string.punctuation," ").split(" ")))
+                    break
+               except:
+                    print("Invalid input for b. Check help for accepted input types.")
+                    inp = input("Do you want to try again? y or n: ")
+                    if inp == "y":
+                         continue
+                    if inp == "n":
+                         print("Goodbye!")
+                         sys.exit(0)
+                    else:
+                         print("I did not understand that. Goodbye!")
+                         sys.exit(0)
+                    
           
           ### Convert matrix and column vector to numpy arrays ###
           
           # Matrix of coefficients
-          A = np.array(A).reshape((dim, dim))
+          try:
+               A = np.array(A).reshape((dim, dim))
+          except:
+               print("Dimension entered and input for A are incompatible. Try again.")
+               sys.exit(0)
           
           # Right hand side coefficients (form: Ax = b)
-          b = np.array(b).reshape((dim,1))
+          try:
+               b = np.array(b).reshape((dim,1))
+          except:
+               print("Dimension entered and input for b are incompatible")
           
           # Augmented matrix (form: [AUG|b])
           AUG = np.concatenate((A,b),axis=1)
