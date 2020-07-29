@@ -63,15 +63,16 @@ def gaussElim(dim):
                          continue
                     if inp == "n":
                          print("Goodbye!")
-                         sys.exit()
+                         return 
                     else:
                          print("I didn't understand that. Goodbye!")
-                         sys.exit()
+                         return
                
                # Check if b is okay
                try:
                     b = list(map(float, b.replace(string.punctuation," ").split(" ")))
                     print(b)
+                    break
                except:
                     print("Invalid input for b. Check help for accepted input types.")
                     inp = input("Do you want to try again? y or n: \n")
@@ -79,10 +80,10 @@ def gaussElim(dim):
                          continue
                     if inp == "n":
                          print("Goodbye!")
-                         return #sys.exit()
+                         return
                     else:
                          print("I did not understand that. Goodbye!")
-                         return #sys.exit()
+                         return
                     
           ################## Calculations ##################
           
@@ -91,16 +92,14 @@ def gaussElim(dim):
           # Matrix of coefficients
           try:
                A = np.array(A).reshape((dim, dim))
-          except:
-               print("Dimension entered and input for A are incompatible. Try again.")
-               sys.exit()
+          except ValueError:
+               sys.exit("Dimension entered and input for A are incompatible. Try again.")
           
           # Right hand side coefficients (form: Ax = b)
           try:
                b = np.array(b).reshape((dim,1))
-          except:
-               print("Dimension entered and input for b are incompatible. Try again.")
-               sys.exit()
+          except ValueError:
+               sys.exit("Dimension entered and input for b are incompatible. Try again.")
           
           # Augmented matrix (form: [AUG|b])
           AUG = np.concatenate((A,b),axis=1)
@@ -130,7 +129,7 @@ def gaussElim(dim):
                                    AUG[i+2,:] = temp_row
                               else:
                                    print("I couldn't find a pivot. Possible singularity.")
-                                   sys.exit(0)
+                                   return
                          elif i == 1:
                               if abs(AUG[i+1,i]) > 1e-5:
                                    temp_row = AUG[i,:].copy()
@@ -138,7 +137,7 @@ def gaussElim(dim):
                                    AUG[i+1,:] = temp_row
                               else:
                                    print("I couldn't find a pivot. Possible singularity.")
-                                   sys.exit(0)
+                                   return
           
                     
                     # The current pivot
@@ -149,7 +148,7 @@ def gaussElim(dim):
                     zero_pivot = (abs(curr_pivot) < 1e-8)
                     if zero_pivot:
                          print("At least one pivot is zero. The matrix is singular.")
-                         sys.exit(0)
+                         return
                     elif i < 1:
                          if abs(AUG[i+1,i]) > 1e-5: 
                               AUG[i+1,:] = AUG[i+1,:] - (AUG[i+1,i]/curr_pivot)*AUG[i,:]
@@ -165,6 +164,8 @@ def gaussElim(dim):
           print("Upper triangular (augmented) matrix, [U|b]:\n", AUG)
           
           # Calculate solution
+          if dim == 2:
+               x =np.zeros((2,1))
           z = AUG[AUG.shape[0]-1,AUG.shape[1]-1]/AUG[AUG.shape[0]-1,AUG.shape[1]-2]
           y = (AUG[AUG.shape[0]-2,AUG.shape[1]-1] - \
                z*AUG[AUG.shape[0]-2,AUG.shape[1]-2])/AUG[AUG.shape[0]-2,AUG.shape[1]-3]
