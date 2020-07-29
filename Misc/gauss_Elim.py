@@ -2,16 +2,17 @@
 """
 Spyder Editor
 
-Gaussian Elimination: A Toy Example (3x3 system)
+Gaussian Elimination: A Toy Example (square systems of dimension 3 or lower)
 """
 import numpy as np
+import string
 import sys
 
 def gaussElim(dim):
           """ 
           Inputs:
           - dim (integer): Dimension of the matrix (if you enter 3, it means a 3x3 matrix)
-          - A (real): Matrix of coefficients (has to be a square matrix and 3x3 or lower)
+          - A (real): Matrix of coefficients (has to be a square matrix of dimension 3 or lower)
                          Enter A as a series of numbers separated by single spaces 
                          starting from A[1,1] and proceeding row-wise
                          (e.g. The 2x2 matrix [1 2 
@@ -41,8 +42,23 @@ def gaussElim(dim):
           ### Input handling ###
           
           # prompt for input. We want A and b
-          A = input("Enter matrix A ({}x{}) as a list: ".format(dim,dim))
-          b = input("Enter column vector b ({}x1) as a list: ".format(dim))
+          msg_A = "Enter matrix A (square with dimension 3 or lower) as a series \
+                    of numbers separated by a space. Start from the first element \
+                    and proceed row-wise."
+          msg_b = "Enter column vector b as a series of numbers separated by a \
+                    space. Start from the first element proceed row-wise."
+                    
+          A = input(msg_A)
+          b = input(msg_b)
+          
+          ### Input Error handling ###
+          response = True
+          while response:
+               try:
+                    list(map(float, A.replace(string.punctuation," ").split(" ")))
+               except:
+                    print("Invalid input for A. Check help for accepted input types.")
+                    inp = input("Do you want to try again? y or n: ")
           
           ### Convert matrix and column vector to numpy arrays ###
           
