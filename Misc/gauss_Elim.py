@@ -39,52 +39,52 @@ def gaussElim(dim):
           it is considered to be equal to zero. Also, row exchanges will only 
           be done if the element below is greater than 1x10^-5. 
           """
-          ### Input handling ###
+          ################## Inputs ##################
           
-          # prompt for input. We want A and b
-          msg_A = "Enter matrix A (square with dimension 3 or lower) as a series \
-                    of numbers separated by a space. Start from the first element \
-                    and proceed row-wise."
-          msg_b = "Enter column vector b as a series of numbers separated by a \
-                    space. Start from the first element proceed row-wise."
+          # Messages for A and b inputs
+          msg_A = "Enter matrix A (square with dimension 3 or lower) as a series of numbers separated by a space. Start from the first element and proceed row-wise.\n"
+          msg_b = "Enter column vector b as a series of numbers separated by a space. Start from the first element proceed row-wise.\n"
           
-          ### Input Error handling ###
+          ### Input error handling ###
           while True:
+               
+               # Prompt for input. We want A and b
                A = input(msg_A)
                b = input(msg_b)
                
                # Check if A is okay
                try:
                     A = list(map(float, A.replace(string.punctuation," ").split(" ")))
-                    break
+                    print(A)
                except:
                     print("Invalid input for A. Check help for accepted input types.")
-                    inp = input("Do you want to try again? y or n: ")
+                    inp = input("Do you want to try again? y or n: \n")
                     if inp == "y":
                          continue
                     if inp == "n":
                          print("Goodbye!")
-                         sys.exit(0)
+                         sys.exit()
                     else:
                          print("I didn't understand that. Goodbye!")
-                         sys.exit(0)
+                         sys.exit()
                
                # Check if b is okay
                try:
-                    A = list(map(float, b.replace(string.punctuation," ").split(" ")))
-                    break
+                    b = list(map(float, b.replace(string.punctuation," ").split(" ")))
+                    print(b)
                except:
                     print("Invalid input for b. Check help for accepted input types.")
-                    inp = input("Do you want to try again? y or n: ")
+                    inp = input("Do you want to try again? y or n: \n")
                     if inp == "y":
                          continue
                     if inp == "n":
                          print("Goodbye!")
-                         sys.exit(0)
+                         return #sys.exit()
                     else:
                          print("I did not understand that. Goodbye!")
-                         sys.exit(0)
+                         return #sys.exit()
                     
+          ################## Calculations ##################
           
           ### Convert matrix and column vector to numpy arrays ###
           
@@ -93,13 +93,14 @@ def gaussElim(dim):
                A = np.array(A).reshape((dim, dim))
           except:
                print("Dimension entered and input for A are incompatible. Try again.")
-               sys.exit(0)
+               sys.exit()
           
           # Right hand side coefficients (form: Ax = b)
           try:
                b = np.array(b).reshape((dim,1))
           except:
-               print("Dimension entered and input for b are incompatible")
+               print("Dimension entered and input for b are incompatible. Try again.")
+               sys.exit()
           
           # Augmented matrix (form: [AUG|b])
           AUG = np.concatenate((A,b),axis=1)
@@ -107,6 +108,7 @@ def gaussElim(dim):
           
           
           ### Start looping row-wise ###
+          
           # Remember the current pivot and have a temp row for exchanges
           curr_pivot = 0
           temp_row = np.zeros(AUG.shape[1])
@@ -157,7 +159,7 @@ def gaussElim(dim):
                          if abs(AUG[i+1,i]) > 1e-5: 
                               AUG[i+1,:] = AUG[i+1,:] - (AUG[i+1,i]/curr_pivot)*AUG[i,:]
           
-          ### Output ###
+          ################## Output ##################
           
           # Matrix output               
           print("Upper triangular (augmented) matrix, [U|b]:\n", AUG)
