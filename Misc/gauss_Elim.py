@@ -31,9 +31,13 @@ def gaussElim(dim):
           1x10^-8 i.e. if the absolute value of an entry is less than 1x10^-8, 
           it is considered to be equal to zero. 
           """
+          ### Input handling ###
+          
           # prompt for input. We want A and b
           A = input("Enter matrix A ({}x{}) as a list: ".format(dim,dim))
           b = input("Enter column vector b ({}x1) as a list: ".format(dim))
+          
+          ### Convert matrix and column vector to numpy arrays ###
           
           # Matrix of coefficients
           A = np.array(A).reshape((dim, dim))
@@ -45,6 +49,8 @@ def gaussElim(dim):
           AUG = np.concatenate((A,b),axis=1)
           print("Augmented Matrix is:\n", AUG)
           
+          
+          ### Start looping row-wise ###
           # Remember the current pivot and have a temp row for exchanges
           curr_pivot = 0
           temp_row = np.zeros(AUG.shape[1])
@@ -94,6 +100,8 @@ def gaussElim(dim):
                     elif i < 2:
                          if abs(AUG[i+1,i]) > 1e-5: 
                               AUG[i+1,:] = AUG[i+1,:] - (AUG[i+1,i]/curr_pivot)*AUG[i,:]
+          
+          ### Output ###
           
           # Matrix output               
           print("Upper triangular (augmented) matrix, [U|b]:\n", AUG)
