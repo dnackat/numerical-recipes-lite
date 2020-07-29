@@ -41,6 +41,12 @@ def gaussElim(dim):
           """
           ################## Inputs ##################
           
+          # Check if dimension is okay
+          try:
+               int(dim)
+          except ValueError:
+               sys.exit("Please enter a valid integer for dimension.")
+          
           # Messages for A and b inputs
           msg_A = "Enter matrix A (square with dimension 3 or lower) as a series of numbers separated by a space. Start from the first element and proceed row-wise.\n"
           msg_b = "Enter column vector b as a series of numbers separated by a space. Start from the first element proceed row-wise.\n"
@@ -164,7 +170,7 @@ def gaussElim(dim):
           print("Upper triangular (augmented) matrix, [U|b]:\n", AUG)
           
           # Calculate solution
-          if dim == 2:
+          for i in range(dim-1):
                x =np.zeros((2,1))
           z = AUG[AUG.shape[0]-1,AUG.shape[1]-1]/AUG[AUG.shape[0]-1,AUG.shape[1]-2]
           y = (AUG[AUG.shape[0]-2,AUG.shape[1]-1] - \
