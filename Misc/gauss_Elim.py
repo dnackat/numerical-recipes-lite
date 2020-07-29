@@ -65,7 +65,6 @@ def gaussElim(dim):
                # Check if A is okay
                try:
                     A = list(map(float, A.replace(string.punctuation," ").split(" ")))
-                    print(A)
                except:
                     print("Invalid input for A. Check help for accepted input types.")
                     inp = input("Do you want to try again? y or n: \n")
@@ -81,7 +80,6 @@ def gaussElim(dim):
                # Check if b is okay
                try:
                     b = list(map(float, b.replace(string.punctuation," ").split(" ")))
-                    print(b)
                     break
                except:
                     print("Invalid input for b. Check help for accepted input types.")
@@ -113,8 +111,8 @@ def gaussElim(dim):
           
           # Augmented matrix (form: [AUG|b])
           AUG = np.concatenate((A,b),axis=1)
-          print("Augmented Matrix is:\n", AUG)
-          
+          print("\nAugmented Matrix is:\n", AUG)
+          print("\n")
           
           ### Start looping row-wise ###
           
@@ -138,7 +136,8 @@ def gaussElim(dim):
                                    AUG[i,:] = AUG[i+2,:]
                                    AUG[i+2,:] = temp_row
                               else:
-                                   print("I couldn't find a pivot. Possible singularity.")
+                                   print("Reduced matrix:\n",AUG)
+                                   print("\nI couldn't find a pivot. Possible singularity.\n")
                                    return
                          elif dim > 2 and i == 1:
                               if abs(AUG[i+1,i]) > 1e-5:
@@ -146,18 +145,19 @@ def gaussElim(dim):
                                    AUG[i,:] = AUG[i+1,:]
                                    AUG[i+1,:] = temp_row
                               else:
-                                   print("I couldn't find a pivot. Possible singularity.")
+                                   print("Reduced matrix:\n",AUG)
+                                   print("\nI couldn't find a pivot. Possible singularity.\n")
                                    return
           
                     
                     # The current pivot
                     curr_pivot = AUG[i,i]
-                    print("Pivot for row",i+1,"is:",curr_pivot)
+                    print("Pivot for row",i+1,"is:",curr_pivot,"\n")
                     
                     # Do row operations
                     zero_pivot = (abs(curr_pivot) < 1e-8)
                     if zero_pivot:
-                         print("At least one pivot is zero. The matrix is singular.")
+                         print("At least one pivot is zero. The matrix is singular.\n")
                          return
                     elif i < 1:
                          if abs(AUG[i+1,i]) > 1e-5: 
@@ -180,19 +180,13 @@ def gaussElim(dim):
                if i == dim-1:
                     x[i] = AUG[i,-1]/AUG[i,i]
                else:
-                    x[i] = (AUG[i,-1] - np.dot(AUG[i,i+1:],x[i+1:]))/AUG[i,i]
-                    
-          # z = AUG[AUG.shape[0]-1,AUG.shape[1]-1]/AUG[AUG.shape[0]-1,AUG.shape[1]-2]
-          # y = (AUG[AUG.shape[0]-2,AUG.shape[1]-1] - \
-          #      z*AUG[AUG.shape[0]-2,AUG.shape[1]-2])/AUG[AUG.shape[0]-2,AUG.shape[1]-3]
-          # x = (AUG[AUG.shape[0]-3,AUG.shape[1]-1] - z*AUG[AUG.shape[0]-3,AUG.shape[1]-2] \
-          #      - y*AUG[AUG.shape[0]-3,AUG.shape[1]-3])/AUG[AUG.shape[0]-3,AUG.shape[1]-4]
+                    x[i] = (AUG[i,-1] - np.dot(AUG[i,i+1:-1],x[i+1:]))/AUG[i,i]
                
           # Print solution
           if dim == 2:
-               print("Solution is: x = {:.2f}, y = {:.2f}".format(x[0],x[1]))
+               print("\nSolution is: x = {:.2f}, y = {:.2f}".format(x[0],x[1]))
           else: 
-               print("Solution is: x = {:.2f}, y = {:.2f}, z = {:.2f}".format(x[0],x[1],x[2])) 
+               print("\nSolution is: x = {:.2f}, y = {:.2f}, z = {:.2f}".format(x[0],x[1],x[2])) 
                
                
           return
