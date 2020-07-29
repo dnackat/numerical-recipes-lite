@@ -133,14 +133,14 @@ def gaussElim(dim):
                                    temp_row = AUG[i,:].copy()
                                    AUG[i,:] = AUG[i+1,:]
                                    AUG[i+1,:] = temp_row
-                              elif abs(AUG[i+2,i]) > 1e-5:
+                              elif dim > 2 and abs(AUG[i+2,i]) > 1e-5:
                                    temp_row = AUG[i,:].copy()                        
                                    AUG[i,:] = AUG[i+2,:]
                                    AUG[i+2,:] = temp_row
                               else:
                                    print("I couldn't find a pivot. Possible singularity.")
                                    return
-                         elif i == 1:
+                         elif dim > 2 and i == 1:
                               if abs(AUG[i+1,i]) > 1e-5:
                                    temp_row = AUG[i,:].copy()
                                    AUG[i,:] = AUG[i+1,:]
@@ -162,9 +162,9 @@ def gaussElim(dim):
                     elif i < 1:
                          if abs(AUG[i+1,i]) > 1e-5: 
                               AUG[i+1,:] = AUG[i+1,:] - (AUG[i+1,i]/curr_pivot)*AUG[i,:]
-                         if abs(AUG[i+2,i]) > 1e-5: 
+                         if dim > 2 and abs(AUG[i+2,i]) > 1e-5: 
                               AUG[i+2,:] = AUG[i+2,:] - (AUG[i+2,i]/curr_pivot)*AUG[i,:]
-                    elif i < 2:
+                    elif dim > 2 and i < 2:
                          if abs(AUG[i+1,i]) > 1e-5: 
                               AUG[i+1,:] = AUG[i+1,:] - (AUG[i+1,i]/curr_pivot)*AUG[i,:]
           
@@ -174,11 +174,11 @@ def gaussElim(dim):
           print("Upper triangular (augmented) matrix, [U|b]:\n", AUG)
           
           ### Calculate solution by back substitution ###
-          x = np.zeros(dim-1)
+          x = np.zeros(dim)
           # Iterate in reverse for back substitution
           for i in range(dim-1,-1,-1):
                if i == dim-1:
-                    x[i] = AUG[i,-1]/AUG[i,-2]
+                    x[i] = AUG[i,-1]/AUG[i,i]
                else:
                     x[i] = (AUG[i,-1] - np.dot(AUG[i,i+1:],x[i+1:]))/AUG[i,i]
                     
@@ -189,8 +189,11 @@ def gaussElim(dim):
           #      - y*AUG[AUG.shape[0]-3,AUG.shape[1]-3])/AUG[AUG.shape[0]-3,AUG.shape[1]-4]
                
           # Print solution
-          for i in range()
-          print("Solution is: x = {:.2f}, y = {:.2f}, z = {:.2f}".format(x,y,z))
+          if dim == 2:
+               print("Solution is: x = {:.2f}, y = {:.2f}".format(x[0],x[1]))
+          else: 
+               print("Solution is: x = {:.2f}, y = {:.2f}, z = {:.2f}".format(x[0],x[1],x[2])) 
+               
                
           return
           
