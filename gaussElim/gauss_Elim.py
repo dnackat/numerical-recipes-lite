@@ -67,7 +67,6 @@ def gaussElim(dim):
                     A = list(map(float, \
                         A.translate(str.maketrans('', '', \
                                         string.punctuation.replace("-",""))).split(" ")))
-                    print(A)
                except:
                     print("Invalid input for A. Check help for accepted input types.")
                     inp = input("Do you want to try again? y or n: \n")
@@ -85,7 +84,6 @@ def gaussElim(dim):
                     b = list(map(float, \
                         b.translate(str.maketrans('', '', \
                                         string.punctuation.replace("-",""))).split(" ")))
-                    print(b)
                     break
                except:
                     print("Invalid input for b. Check help for accepted input types.")
@@ -180,6 +178,7 @@ def gaussElim(dim):
           print("Upper triangular (augmented) matrix, [U|b]:\n", AUG)
           
           ### Calculate solution by back substitution ###
+          
           x = np.zeros(dim)
           # Iterate in reverse for back substitution
           for i in range(dim-1,-1,-1):
