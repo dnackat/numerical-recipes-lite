@@ -8,7 +8,7 @@ import numpy as np
 import string
 import sys
 
-def gaussElim(dim):
+def gaussElim(dim, tol=1e-6):
           """ 
           Inputs:
           - dim (integer): Dimension of the matrix (if you enter 3, it means a 3x3 matrix)
@@ -34,10 +34,12 @@ def gaussElim(dim):
           This function performs Gaussian elimination on square matrices of 
           dimension 3 or lower and calculates the soluion for the system Ax = b provided 
           the matrix is non-singular. It has the capability to do row exchanges 
-          whenever they are necessary. The tolerance used to check if a quanitity 
-          is zero is 1x10^-8 i.e. if the absolute value of an entry is less than 1x10^-8, 
+          whenever they are necessary. The default tolerance used to check if a quanitity 
+          is zero is 1x10^-6 i.e. if the absolute value of an entry is less than 1x10^-6, 
           it is considered to be equal to zero. Also, row exchanges will only 
-          be done if the element below is greater than 1x10^-5. 
+          be done if the element below is greater than the tolerance. To change 
+          the tolerance, pass it as the second argument to the function 
+          (e.g. gaussElim(3,1e-4)).
           """
           ################## Inputs ##################
           
@@ -125,17 +127,18 @@ def gaussElim(dim):
           temp_row = np.zeros(AUG.shape[1])
           
           # Start loop
-          for i in range(AUG.shape[0]):
+          for i in range(AUG.shape[0] - 1):
+               
                     # Check if pivot is non-zero
-                    if i < AUG.shape[0]-1 and abs(AUG[i,i]) < 1e-8:
+                    if abs(AUG[i,i]) < tol: 
                          
                          # Try exchanging rows
                          if i == 0:
-                              if abs(AUG[i+1,i]) > 1e-5:
+                              if abs(AUG[i+1,i]) > tol:
                                    temp_row = AUG[i,:].copy()
                                    AUG[i,:] = AUG[i+1,:]
                                    AUG[i+1,:] = temp_row
-                              elif dim > 2 and abs(AUG[i+2,i]) > 1e-5:
+                              elif abs(AUG[i+2,i]) > tol: #dim > 2 and 
                                    temp_row = AUG[i,:].copy()                        
                                    AUG[i,:] = AUG[i+2,:]
                                    AUG[i+2,:] = temp_row
@@ -143,8 +146,8 @@ def gaussElim(dim):
                                    print("Reduced matrix:\n",AUG)
                                    print("\nI couldn't find a pivot. Possible singularity.\n")
                                    return
-                         elif dim > 2 and i == 1:
-                              if abs(AUG[i+1,i]) > 1e-5:
+                         elif i == 1:
+                              if abs(AUG[i+1,i]) > tol:
                                    temp_row = AUG[i,:].copy()
                                    AUG[i,:] = AUG[i+1,:]
                                    AUG[i+1,:] = temp_row
@@ -159,17 +162,17 @@ def gaussElim(dim):
                     print("Pivot for row",i+1,"is:",curr_pivot,"\n")
                     
                     # Do row operations
-                    zero_pivot = (abs(curr_pivot) < 1e-8)
+                    zero_pivot = (abs(curr_pivot) < tol)
                     if zero_pivot:
                          print("At least one pivot is zero. The matrix is singular.\n")
                          return
                     elif i < 1:
-                         if abs(AUG[i+1,i]) > 1e-5: 
+                         if abs(AUG[i+1,i]) > tol: 
                               AUG[i+1,:] = AUG[i+1,:] - (AUG[i+1,i]/curr_pivot)*AUG[i,:]
-                         if dim > 2 and abs(AUG[i+2,i]) > 1e-5: 
+                         if dim > 2 and abs(AUG[i+2,i]) > tol: 
                               AUG[i+2,:] = AUG[i+2,:] - (AUG[i+2,i]/curr_pivot)*AUG[i,:]
-                    elif dim > 2 and i < 2:
-                         if abs(AUG[i+1,i]) > 1e-5: 
+                    elif i < 2:
+                         if abs(AUG[i+1,i]) > tol: 
                               AUG[i+1,:] = AUG[i+1,:] - (AUG[i+1,i]/curr_pivot)*AUG[i,:]
           
           ################## Output ##################
