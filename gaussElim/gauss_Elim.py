@@ -142,11 +142,28 @@ def gaussElim(dim, tol=1e-6):
                                    temp_row = AUG[i,:].copy()                        
                                    AUG[i,:] = AUG[i+2,:]
                                    AUG[i+2,:] = temp_row
+                              elif dim > 3 and abs(AUG[i+3,i]) > tol:
+                                   temp_row = AUG[i,:].copy()                        
+                                   AUG[i,:] = AUG[i+3,:]
+                                   AUG[i+3,:] = temp_row
                               else:
                                    print("Reduced matrix:\n",AUG)
                                    print("\nI couldn't find a pivot. Possible singularity.\n")
                                    return
                          elif i == 1:
+                              if abs(AUG[i+1,i]) > tol:
+                                   temp_row = AUG[i,:].copy()
+                                   AUG[i,:] = AUG[i+1,:]
+                                   AUG[i+1,:] = temp_row
+                              if abs(AUG[i+1,i]) > tol:
+                                   temp_row = AUG[i,:].copy()
+                                   AUG[i,:] = AUG[i+1,:]
+                                   AUG[i+1,:] = temp_row
+                              else:
+                                   print("Reduced matrix:\n",AUG)
+                                   print("\nI couldn't find a pivot. Possible singularity.\n")
+                                   return
+                         elif i == 2:
                               if abs(AUG[i+1,i]) > tol:
                                    temp_row = AUG[i,:].copy()
                                    AUG[i,:] = AUG[i+1,:]
