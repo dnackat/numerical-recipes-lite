@@ -2,7 +2,7 @@
 """
 Spyder Editor
 
-Gaussian Elimination: A Toy Example (for square systems of dimension 3 or lower)
+Gaussian Elimination: A Toy Example (for square systems of dimension 4 or lower)
 """
 import numpy as np
 import string
@@ -12,7 +12,7 @@ def gaussElim(dim, tol=1e-6):
           """ 
           Inputs:
           - dim (integer): Dimension of the matrix (if you enter 3, it means a 3x3 matrix)
-          - A (real): Matrix of coefficients (has to be a square matrix of dimension 3 or lower)
+          - A (real): Matrix of coefficients (has to be a square matrix of dimension 4 or lower)
                          Enter A as a series of numbers separated by single spaces 
                          starting from A[1,1] and proceeding row-wise
                          (e.g. The 2x2 matrix [1 2 
@@ -134,6 +134,7 @@ def gaussElim(dim, tol=1e-6):
                          
                          # Try exchanging rows
                          if i == 0:
+                              # Pivot in row 1 is zero
                               if abs(AUG[i+1,i]) > tol:
                                    temp_row = AUG[i,:].copy()
                                    AUG[i,:] = AUG[i+1,:]
@@ -151,6 +152,7 @@ def gaussElim(dim, tol=1e-6):
                                    print("\nI couldn't find a pivot. Possible singularity.\n")
                                    return
                          elif i == 1:
+                              # Pivot in row 2 is zero
                               if abs(AUG[i+1,i]) > tol:
                                    temp_row = AUG[i,:].copy()
                                    AUG[i,:] = AUG[i+1,:]
@@ -164,6 +166,7 @@ def gaussElim(dim, tol=1e-6):
                                    print("\nI couldn't find a pivot. Possible singularity.\n")
                                    return
                          elif i == 2:
+                              # Pivot in row 3 is zero
                               if abs(AUG[i+1,i]) > tol:
                                    temp_row = AUG[i,:].copy()
                                    AUG[i,:] = AUG[i+1,:]
@@ -182,6 +185,7 @@ def gaussElim(dim, tol=1e-6):
                     zero_pivot = (abs(curr_pivot) < tol)
                     if zero_pivot:
                          print("At least one pivot is zero. The matrix is singular.\n")
+                         print("Current form of the matrix:\n",AUG)
                          return
                     elif i < 1:
                          if abs(AUG[i+1,i]) > tol: 
