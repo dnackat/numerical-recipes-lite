@@ -49,7 +49,7 @@ def gaussElim(dim, tol=1e-6):
           except ValueError:
                sys.exit("Please enter a valid integer for dimension.")
           else:
-               if dim < 2 or dim > 3:
+               if dim < 2 or dim > 4:
                     print("Dimension too low or too high. Check function help and try again.")
                     return
           
@@ -155,10 +155,10 @@ def gaussElim(dim, tol=1e-6):
                                    temp_row = AUG[i,:].copy()
                                    AUG[i,:] = AUG[i+1,:]
                                    AUG[i+1,:] = temp_row
-                              if abs(AUG[i+1,i]) > tol:
+                              elif dim > 3 and abs(AUG[i+2,i]) > tol:
                                    temp_row = AUG[i,:].copy()
-                                   AUG[i,:] = AUG[i+1,:]
-                                   AUG[i+1,:] = temp_row
+                                   AUG[i,:] = AUG[i+2,:]
+                                   AUG[i+2,:] = temp_row
                               else:
                                    print("Reduced matrix:\n",AUG)
                                    print("\nI couldn't find a pivot. Possible singularity.\n")
@@ -188,13 +188,22 @@ def gaussElim(dim, tol=1e-6):
                               AUG[i+1,:] = AUG[i+1,:] - (AUG[i+1,i]/curr_pivot)*AUG[i,:]
                          if dim > 2 and abs(AUG[i+2,i]) > tol: 
                               AUG[i+2,:] = AUG[i+2,:] - (AUG[i+2,i]/curr_pivot)*AUG[i,:]
+                         if dim > 3 and abs(AUG[i+3,i]) > tol: 
+                              AUG[i+3,:] = AUG[i+3,:] - (AUG[i+3,i]/curr_pivot)*AUG[i,:]
                     elif i < 2:
                          if abs(AUG[i+1,i]) > tol: 
                               AUG[i+1,:] = AUG[i+1,:] - (AUG[i+1,i]/curr_pivot)*AUG[i,:]
+                         if dim > 3 and abs(AUG[i+2,i]) > tol: 
+                              AUG[i+2,:] = AUG[i+2,:] - (AUG[i+2,i]/curr_pivot)*AUG[i,:]
+                    elif i < 3 and dim > 3:
+                         if abs(AUG[i+1,i]) > tol: 
+                              AUG[i+1,:] = AUG[i+1,:] - (AUG[i+1,i]/curr_pivot)*AUG[i,:]                         
+                         
           
           ################## Output ##################
           
-          # Matrix output               
+          # Matrix output
+          print("Pivot for row {} is {:.2f}".format(dim-1, AUG[dim-1,dim-1]))               
           print("Upper triangular (augmented) matrix, [U|b]:\n", AUG)
           
           ### Calculate solution by back substitution ###
@@ -210,8 +219,10 @@ def gaussElim(dim, tol=1e-6):
           # Print solution
           if dim == 2:
                print("\nSolution is: x = {:.2f}, y = {:.2f}".format(x[0],x[1]))
-          else: 
-               print("\nSolution is: x = {:.2f}, y = {:.2f}, z = {:.2f}".format(x[0],x[1],x[2])) 
+          elif dim == 3: 
+               print("\nSolution is: x = {:.2f}, y = {:.2f}, z = {:.2f}".format(x[0],x[1],x[2]))
+          else:     
+               print("\nSolution is: x = {:.2f}, y = {:.2f}, z = {:.2f}, t = {:.2f}".format(x[0],x[1],x[2],x[3]))
                
                
           return
