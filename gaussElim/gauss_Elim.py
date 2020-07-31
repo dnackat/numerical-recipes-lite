@@ -138,7 +138,7 @@ def gaussElim(dim, tol=1e-6):
                                    temp_row = AUG[i,:].copy()
                                    AUG[i,:] = AUG[i+1,:]
                                    AUG[i+1,:] = temp_row
-                              elif abs(AUG[i+2,i]) > tol: #dim > 2 and 
+                              elif abs(AUG[i+2,i]) > tol: 
                                    temp_row = AUG[i,:].copy()                        
                                    AUG[i,:] = AUG[i+2,:]
                                    AUG[i+2,:] = temp_row
