@@ -207,7 +207,8 @@ def gaussElim(dim, tol=1e-6):
           ################## Output ##################
           
           # Matrix output
-          print("Pivot for row {} is {:.2f}\n".format(dim-1, AUG[dim-1,dim-1]))               
+          print("Pivot for row {} is {:.2f}\n".format(dim-1, AUG[dim-1,dim-1]))
+          print("################ OUTPUT ###############\n")               
           print("Upper triangular (augmented) matrix, [U|b]:\n", AUG)
           
           ### Calculate solution by back substitution ###
@@ -228,6 +229,6 @@ def gaussElim(dim, tol=1e-6):
           else:     
                print("\nSolution is: x = {:.2f}, y = {:.2f}, z = {:.2f}, t = {:.2f}".format(x[0],x[1],x[2],x[3]))
                
-               
+          print("\n################ END OF OUTPUT ###############")   
           return
           
