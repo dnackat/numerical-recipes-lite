@@ -176,7 +176,7 @@ def gaussElim(dim, tol=1e-6):
                     
                     # The current pivot
                     curr_pivot = AUG[i,i]
-                    print("Pivot for row",i+1,"is:",curr_pivot,"\n")
+                    print("Pivot for row {} is {:.2f}\n".format(i+1, curr_pivot))
                     
                     # Do row operations
                     zero_pivot = (abs(curr_pivot) < tol)
@@ -203,7 +203,7 @@ def gaussElim(dim, tol=1e-6):
           ################## Output ##################
           
           # Matrix output
-          print("Pivot for row {} is {:.2f}".format(dim-1, AUG[dim-1,dim-1]))               
+          print("Pivot for row {} is {:.2f}\n".format(dim-1, AUG[dim-1,dim-1]))               
           print("Upper triangular (augmented) matrix, [U|b]:\n", AUG)
           
           ### Calculate solution by back substitution ###
