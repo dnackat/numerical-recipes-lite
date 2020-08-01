@@ -4,7 +4,7 @@
 
 *These are a bunch of python programs on matrix methods (Gaussian elimination and whatnot) and numerical methods (Runge-Kutta, etc.) that I have written, am writing now, or plan to write in the near future. I'm doing these for learning and to use it in small projects. This should be fun!*    
     
-**Currently working on**: *Gaussian Elimination*
+**Currently working on**: *Newton's Method*
 
 *What I've coded so far:*    
     
@@ -13,4 +13,4 @@ M1. *Gaussian Elimination*
     
 
 ### Numerical Methods    
- 
+N1. *Newton's Method* 
