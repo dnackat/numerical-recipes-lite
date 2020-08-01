@@ -9,7 +9,7 @@ Newton's method: A toy example
 """
 import numpy as np
 
-f = lambda x: x**2 - 5
+f = lambda x: np.exp(x) + x
 
 def fn(f,x):
      """
@@ -45,14 +45,15 @@ def d_fn(f,x,h=1e-6):
      
      return (fn(f,x+h) - fn(f,x))/h
 
-def newt(f,x0,tol=1e-5,iters=100,span=10):
+def newt(f,x0,tol=1e-5,iters=1000):
      """
      This function solves the input equation iteratively using Newton's method.
      x_i+1 = x_i - f(x_i)/f'(x_i) 
      
      Inputs:
           - f: function definition (in f(x) = 0 form e.g. if you wish to solve x^2 = 5, f would 
-                                    be x^5 - 5)
+                                    be x^5 - 5). While entering function definition,
+               use lambda method e.g. for e^x + x = 0, f = lambda x: np.exp(x) + x 
           - x0: initial guess or subsequent predicitons
           
      Output:
@@ -64,10 +65,7 @@ def newt(f,x0,tol=1e-5,iters=100,span=10):
             it as the third argument to the function (e.g. newt(f,x0,1e-6,iters,span)).
           - By default this function uses at most 100 iterations to check if 
             there is convergence. If you wish to change the number of iterations,
-            pass it as the fourth argument to the function (e.g. newt(f,x0,tol,500,span))
-          - For convenience, the space searched for solutions is restricted to 
-            (x0 - span) to (x0 + span). To change span, pass it as the fifth argument to
-            the function (you know how). 
+            pass it as the fourth argument to the function (e.g. newt(f,x0,tol,500,span)) 
      """
      if tol < 1e-5:
           print("Interval, h, is too low. Resetting to default vallue of 1e-5.\n")
@@ -78,21 +76,16 @@ def newt(f,x0,tol=1e-5,iters=100,span=10):
      except ValueError:
           print("Invalid value for ietrations. Try again.\n")
           return
-          
-     try:
-          span = int(span)
-     except ValueError:
-          print("Invalid value for span. Try again.\n")
-          return
-               
-     x = np.zeros(iters) #np.linspace(x0-span,x0+span,span*10)
+
+     # Array to hold initial guess and successive predictions          
+     x = np.zeros(iters)
      
      # Start loop
      for i in range(iters):
           if i == 0:
                x[i] = x0
           else:
-               x[i] = x[i] - fn(f,x[i])/d_fn(f,x[i])
+               x[i] = x[i-1] - fn(f,x[i-1])/d_fn(f,x[i-1])
                
           # Check for convergence
           if i > 0 and abs(x[i] - x[i-1]) < tol:
