@@ -36,6 +36,24 @@ def d_fn(x,h=1e-6):
            To change the interval, h, pass it as the second argument to the function
            (e.g. d_fn(x,1e-4))
      """
+     if h < 1e-8:
+          print("Interval, h, is too low. Resetting to default value.")
+          h = 1e-6
      
+     return (fn(x+h) - f(x))/h
+
+def newt(f,x,tol=1e-5):
+     """
+     Inputs:
+          - f: function definition (in f(x) = 0 form e.g. if you wish to solve x^2 = 5, f would 
+                                    be x^5 - 5)
+          - x: initial guess or subsequent predicitons
+          
+     Output:
+          - Best approximation to the solution of f(x) = 0
+     
+     Note: 
+     """
+
      
      
