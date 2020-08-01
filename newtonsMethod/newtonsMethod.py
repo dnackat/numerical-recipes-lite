@@ -9,7 +9,7 @@ Newton's method: A toy example
 """
 import numpy as np
 
-f = np.exp
+f = lambda x: x**2 - 5
 
 def fn(f,x):
      """
@@ -21,11 +21,12 @@ def fn(f,x):
           - Function value at x i.e. f(x)
      """
      
-     return float(map(f,x))
+     return f(x)
 
-def d_fn(x,h=1e-6):
+def d_fn(f,x,h=1e-6):
      """
      Inputs:
+          - f: function definition (e.g. f = x**2 - 5)
           - x: initial guess or subsequent predicitons
           
      Outputs:
@@ -37,11 +38,12 @@ def d_fn(x,h=1e-6):
           To change the interval, h, pass it as the second argument to the function
           (e.g. d_fn(x,1e-4))
      """
+     
      if h < 1e-8:
-          print("Interval, h, is too low. Setting to 1e-8.")
+          print("Interval, h, is too low. Setting to 1e-8.\n")
           h = 1e-8
      
-     return (fn(x+h) - f(x))/h
+     return (fn(f,x+h) - fn(f,x))/h
 
 def newt(f,x0,tol=1e-5,iters=100,span=10):
      """
@@ -67,6 +69,41 @@ def newt(f,x0,tol=1e-5,iters=100,span=10):
             (x0 - span) to (x0 + span). To change span, pass it as the fifth argument to
             the function (you know how). 
      """
-
+     if tol < 1e-5:
+          print("Interval, h, is too low. Resetting to default vallue of 1e-5.\n")
+          tol = 1e-5
+          
+     try:
+          iters = int(iters)
+     except ValueError:
+          print("Invalid value for ietrations. Try again.\n")
+          return
+          
+     try:
+          span = int(span)
+     except ValueError:
+          print("Invalid value for span. Try again.\n")
+          return
+               
+     x = np.zeros(iters) #np.linspace(x0-span,x0+span,span*10)
+     
+     # Start loop
+     for i in range(iters):
+          if i == 0:
+               x[i] = x0
+          else:
+               x[i] = x[i] - fn(f,x[i])/d_fn(f,x[i])
+               
+          # Check for convergence
+          if i > 0 and abs(x[i] - x[i-1]) < tol:
+               print("\nThe solution is: {:.4f}\n".format(x[i]))
+               return
+          
+     print("\nSorry, I couldn't find a solution in",iters,"iterations.")
+     
+     return
+          
+     
+     
      
      
