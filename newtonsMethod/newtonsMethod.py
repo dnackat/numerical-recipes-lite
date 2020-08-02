@@ -9,7 +9,7 @@ Newton's method: A toy example
 """
 import numpy as np
 
-f = lambda x: np.exp(x) + x
+f = lambda x: np.exp(x) + x**3
 
 def fn(f,x):
      """
@@ -45,7 +45,7 @@ def d_fn(f,x,h=1e-6):
      
      return (fn(f,x+h) - fn(f,x))/h
 
-def newt(f,x0,tol=1e-5,iters=1000):
+def newt(f,x0,tol=1e-5,iters=100):
      """
      This function solves the input equation iteratively using Newton's method.
      x_i+1 = x_i - f(x_i)/f'(x_i) 
@@ -85,14 +85,15 @@ def newt(f,x0,tol=1e-5,iters=1000):
           if i == 0:
                x[i] = x0
           else:
-               x[i] = x[i-1] - fn(f,x[i-1])/d_fn(f,x[i-1])
+               x[i] = x[i-1] - fn(f,x[i-1])/max(d_fn(f,x[i-1]),1e-10)
                
           # Check for convergence
           if i > 0 and abs(x[i] - x[i-1]) < tol:
                print("\nThe solution is: {:.4f}\n".format(x[i]))
+               print("Sir Isaac needed", i,"iterations to reach that solution.\n")
                return
           
-     print("\nSorry, I couldn't find a solution in",iters,"iterations.")
+     print("\nSorry, I couldn't find a solution in",iters,"iterations. Consider lowering convergence tolerance.")
      
      return
           
