@@ -11,10 +11,23 @@ Vector field plots
 import numpy as np
 import matplotlib.pyplot as plt
 
-x,y = np.meshgrid(np.linspace(-5,5,10),np.linspace(-5,5,10))
+#%% Vector plots
+x,y = np.meshgrid(np.linspace(-2,2,100),np.linspace(-2,2,100))
 
-u = x/np.sqrt(x**2 + y**2)
-v = y/np.sqrt(x**2 + y**2)
+u = (2*x+y)/np.sqrt(x**2 + y**2)
+v = (2*y+x)/np.sqrt(x**2 + y**2)
 
-plt.quiver(x,y,u,v)
+z = 1/(2*np.pi)*np.exp(-(x**2 + y**2)/2)
+
+#plt.quiver(x,y,u,v)
+plt.contour(x,y,z)
+plt.grid(axis='both')
+
+#%% Plots
+
+x = np.linspace(0,5,50)
+
+y = 5e4*(2/3)**x
+
+plt.plot(x,y,'r-')
 plt.grid(axis='both')
