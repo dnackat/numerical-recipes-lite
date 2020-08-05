@@ -20,14 +20,5 @@ v = (2*y+x)/np.sqrt(x**2 + y**2)
 z = 1/(2*np.pi)*np.exp(-(x**2 + y**2)/2)
 
 #plt.quiver(x,y,u,v)
-plt.contour(x,y,z)
-plt.grid(axis='both')
-
-#%% Plots
-
-x = np.linspace(0,5,50)
-
-y = 5e4*(2/3)**x
-
-plt.plot(x,y,'r-')
+plt.contourf(x,y,z)
 plt.grid(axis='both')
