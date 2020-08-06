@@ -36,7 +36,22 @@ def pascal(max_size=100):
           print("Invalid entry for the size, n. Please try again.")
           return
      
-     # Generate an array to store the 
+     # Generate an array to store the Pascal matrix
      P = np.zeros((n,n))
      
+     # Start the loop to fill in entries
+     for i in range(n):
+          for j in range(i+1):
+               
+               # First row has just one element filled in
+               if i == 0 and j == 0:
+                    P[i,j] = 1
+               # Use rule for all other elements
+               else:
+                    P[i,j] = P[i-1,j-1] + P[i-1,j]
+                    
+     # Output the Pascal matrix
+     print("Pascal's triangle matrix of size",n,"is:\n",P)
      
+     return
+                    
