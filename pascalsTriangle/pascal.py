@@ -10,7 +10,7 @@ This toy script creates a Pascal's triangle matrix
 
 import numpy as np
 
-def pascal(max_size=100):
+def pascal(n, max_size=100):
      """
      Input:
           n: The desired size of the Pascal's triangle matrix (if input is n, size is n by n)
@@ -26,15 +26,15 @@ def pascal(max_size=100):
           coefficients of a binomial expansion.
      """
      
-     # Get input for size
-     n = input("Enter the desired size of the Pascal's triangle (positive integer):\n")
-     
      # Check if size entered is acceptable
      try:
           n = int(n)
      except ValueError:
-          print("Invalid entry for the size, n. Please try again.")
+          print("\nInvalid entry for size, n. Please try again.\n")
           return
+     
+     # Cap the size at max_size
+     n = min(n, max_size)
      
      # Generate an array to store the Pascal matrix
      P = np.zeros((n,n))
@@ -51,7 +51,7 @@ def pascal(max_size=100):
                     P[i,j] = P[i-1,j-1] + P[i-1,j]
                     
      # Output the Pascal matrix
-     print("Pascal's triangle matrix of size",n,"is:\n",P)
+     print("\nPascal's triangle matrix of size",n,"is:")
      
-     return
+     return P
                     
