@@ -9,7 +9,7 @@
 *What I've coded so far:*    
     
 ### Matrix algorithms
-M1. *Gaussian elimination*
+M1. *Gaussian elimination*     
 M2. *Pascal's triangle matrix*    
 
 ### Numerical Methods    
