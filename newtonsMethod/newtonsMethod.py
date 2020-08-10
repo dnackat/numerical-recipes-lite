@@ -9,7 +9,7 @@ Newton's method: A toy example
 """
 import numpy as np
 
-f = lambda x: np.exp(x) + x**3
+f = lambda x: np.cos(x) - x
 
 def fn(f,x):
      """
@@ -85,7 +85,7 @@ def newt(f,x0,tol=1e-5,iters=100):
           if i == 0:
                x[i] = x0
           else:
-               x[i] = x[i-1] - fn(f,x[i-1])/max(d_fn(f,x[i-1]),1e-10)
+               x[i] = x[i-1] - fn(f,x[i-1])/d_fn(f,x[i-1])
                
           # Check for convergence
           if i > 0 and abs(x[i] - x[i-1]) < tol:
