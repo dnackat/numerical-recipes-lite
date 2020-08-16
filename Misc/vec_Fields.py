@@ -12,13 +12,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 #%% Vector plots
-x,y = np.meshgrid(np.linspace(-2,2,10),np.linspace(-2,2,100))
+x,y = np.meshgrid(np.linspace(-2,2,10),np.linspace(-2,2,10))
 
-u = (2*x+y)/np.sqrt(x**2 + y**2)
-v = (2*y+x)/np.sqrt(x**2 + y**2)
+u = x/np.sqrt(x**2 + y**2)
+v = y/np.sqrt(x**2 + y**2)
 
 #z = 1/(2*np.pi)*np.exp(-(x**2 + y**2)/2)
 
-#plt.quiver(x,y,u,v)
-plt.quiver(u,v)
+plt.quiver(x,y,u,v,color='rgb')
 plt.grid(axis='both')
