@@ -36,14 +36,22 @@ def permMatrix(dim=3,ex='r',order=[0]):
           print("\nInvalid entry for dimension. Please enter an integer.\n")
           return
      
+     # Check order list
+     for i in range(len(order)):
+          try:
+               int(order[i])
+          except ValueError:
+               print("Invalid 'order' list! It must contain integers. Try again.")
+     
      # Check if 'ex' is okay
      if ex == 'r':
-          print("\nDoing row exchanges.\n")
+          print("\nRow exchange option selected.\n")
      elif ex == 'c':
-          print("\nDoing column exchanges.\n")
+          print("\nColumn exchange option selected.\n")
      else:
           print("\nInvalid entry for exchange paramter. Check function help and try again.\n")
           return
+
      
      # Create an array to hold the permutation matrix
      P = np.identity(dim)
@@ -51,6 +59,7 @@ def permMatrix(dim=3,ex='r',order=[0]):
      # Build the desired permutation matrix
      if len(order) == 1 and order[0] == 0:
           # Do nothing. Just return the identity matrix
+          print("\nNo exchanges performed.\n")
           return P
      elif len(order) > 1:
           # Iterate through 'order' list and only populate rows/cols that need to be exchanged
@@ -59,3 +68,9 @@ def permMatrix(dim=3,ex='r',order=[0]):
                     if ex == 'r':
                     # Row exchanges
                          P[i,:] = np.identity(dim)[order[i]-1,:]
+                    else:
+                    # Column exchange
+                         P[:,i] = np.identity(dim)[:,order[i]-1]
+                         
+     # If all is well, return the desired perm matrix
+     return P
