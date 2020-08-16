@@ -18,7 +18,7 @@ def permMatrix(dim=3,ex='r',order=[0]):
           order (list of integers): The order in which to shuffle rows or columns.
                                    e.g. 4321 means 4th row is switched with 1st row,
                                         3rd row is switched with the 2nd row, etc.
-                                   Note that the size of the list must be equal to 'dim'.
+                                   Note that the length of this list must be equal to 'dim'.
           
           
      Output:
@@ -26,7 +26,9 @@ def permMatrix(dim=3,ex='r',order=[0]):
           
      Description:
           This function creates a permutation matrix of the desired size for row
-          or column exchanges.
+          or column exchanges. This function is not optimized for resource utilization
+          as an identity matrix is created each time an exchange is to be done.
+          This is done to keep the script remains short and simple.
      """
      
      # Check if dimension okay
