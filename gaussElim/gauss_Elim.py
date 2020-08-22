@@ -124,7 +124,7 @@ def gaussElim(dim, tol=1e-6):
           
           # Remember the current pivot and have a temp row for exchanges
           curr_pivot = 0
-          temp_row = np.zeros(AUG.shape[1])
+          #temp_row = np.zeros(AUG.shape[1])
           
           # Start loop
           for i in range(AUG.shape[0] - 1):
@@ -132,21 +132,15 @@ def gaussElim(dim, tol=1e-6):
                     # Check if pivot is non-zero
                     if abs(AUG[i,i]) < tol: 
                          
-                         # Try exchanging rows
+                         # If it is zero, try exchanging rows
                          if i == 0:
                               # Pivot in row 1 is zero
                               if abs(AUG[i+1,i]) > tol:
-                                   temp_row = AUG[i,:].copy()
-                                   AUG[i,:] = AUG[i+1,:]
-                                   AUG[i+1,:] = temp_row
-                              elif abs(AUG[i+2,i]) > tol: 
-                                   temp_row = AUG[i,:].copy()                        
-                                   AUG[i,:] = AUG[i+2,:]
-                                   AUG[i+2,:] = temp_row
-                              elif dim > 3 and abs(AUG[i+3,i]) > tol:
-                                   temp_row = AUG[i,:].copy()                        
-                                   AUG[i,:] = AUG[i+3,:]
-                                   AUG[i+3,:] = temp_row
+                                   AUG[[i,i+1],:] = AUG[[i+1,i],:]
+                              elif abs(AUG[i+2,i]) > tol:                         
+                                   AUG[[i,i+2],:] = AUG[[i+2,i],:]
+                              elif dim > 3 and abs(AUG[i+3,i]) > tol:                        
+                                   AUG[[i,i+3],:] = AUG[[i+3,i],:]
                               else:
                                    print("Reduced matrix:\n",AUG)
                                    print("\nI couldn't find a pivot. Possible singularity.\n")
@@ -154,13 +148,9 @@ def gaussElim(dim, tol=1e-6):
                          elif i == 1:
                               # Pivot in row 2 is zero
                               if abs(AUG[i+1,i]) > tol:
-                                   temp_row = AUG[i,:].copy()
-                                   AUG[i,:] = AUG[i+1,:]
-                                   AUG[i+1,:] = temp_row
+                                   AUG[[i,i+1],:] = AUG[[i+1,i],:]
                               elif dim > 3 and abs(AUG[i+2,i]) > tol:
-                                   temp_row = AUG[i,:].copy()
-                                   AUG[i,:] = AUG[i+2,:]
-                                   AUG[i+2,:] = temp_row
+                                   AUG[[i,i+2],:] = AUG[[i+2,i],:]
                               else:
                                    print("Reduced matrix:\n",AUG)
                                    print("\nI couldn't find a pivot. Possible singularity.\n")
@@ -168,9 +158,7 @@ def gaussElim(dim, tol=1e-6):
                          elif i == 2:
                               # Pivot in row 3 is zero
                               if abs(AUG[i+1,i]) > tol:
-                                   temp_row = AUG[i,:].copy()
-                                   AUG[i,:] = AUG[i+1,:]
-                                   AUG[i+1,:] = temp_row
+                                   AUG[[i,i+1],:] = AUG[[i+1,i],:]
                               else:
                                    print("Reduced matrix:\n",AUG)
                                    print("\nI couldn't find a pivot. Possible singularity.\n")
