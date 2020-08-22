@@ -122,9 +122,8 @@ def gaussElim(dim, tol=1e-6):
           
           ### Start looping row-wise ###
           
-          # Remember the current pivot and have a temp row for exchanges
+          # Remember the current pivot
           curr_pivot = 0
-          #temp_row = np.zeros(AUG.shape[1])
           
           # Start loop
           for i in range(AUG.shape[0] - 1):
