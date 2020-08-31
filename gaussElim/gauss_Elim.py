@@ -8,10 +8,9 @@ import numpy as np
 import string
 import sys
 
-def gaussElim(dim, tol=1e-6):
+def gaussElim(A, tol=1e-6):
           """ 
           Inputs:
-          - dim (integer): Dimension of the matrix (if you enter 3, it means a 3x3 matrix)
           - A (real): Matrix of coefficients (has to be a square matrix of dimension 4 or lower)
                          Enter A as a series of numbers separated by single spaces 
                          starting from A[1,1] and proceeding row-wise
