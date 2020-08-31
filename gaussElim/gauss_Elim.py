@@ -5,8 +5,6 @@ Spyder Editor
 Gaussian Elimination: A Toy Example (for square systems of dimension 4 or lower)
 """
 import numpy as np
-import string
-import sys
 
 def gaussElim(A, b, tol=1e-6):
           """ 
@@ -57,15 +55,7 @@ def gaussElim(A, b, tol=1e-6):
                               A[i,j] = float(A[i,j])
                except:
                     print("Invalid input for A. Check help for accepted input types and size.")
-                    inp = input("Do you want to try again? y or n: \n")
-                    if inp == "y":
-                         continue
-                    if inp == "n":
-                         print("Goodbye!")
-                         return 
-                    else:
-                         print("I didn't understand that. Goodbye!")
-                         return
+                    return
                
                # Check if b is okay
                try:
@@ -77,15 +67,7 @@ def gaussElim(A, b, tol=1e-6):
                     break
                except:
                     print("Invalid input for b. Check help for accepted input types.")
-                    inp = input("Do you want to try again? y or n: \n")
-                    if inp == "y":
-                         continue
-                    if inp == "n":
-                         print("Goodbye!")
-                         return
-                    else:
-                         print("I did not understand that. Goodbye!")
-                         return
+                    return
                     
           ################## Calculations ##################
           
