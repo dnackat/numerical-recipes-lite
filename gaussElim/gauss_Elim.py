@@ -8,7 +8,7 @@ import numpy as np
 import string
 import sys
 
-def gaussElim(A, tol=1e-6):
+def gaussElim(A, b, tol=1e-6):
           """ 
           Inputs:
           - A (real, numpy array): Matrix of coefficients (has to be a square matrix of dimension 4 or lower)
@@ -17,12 +17,11 @@ def gaussElim(A, tol=1e-6):
                                                4 5] would be entered
                           as np.array([[1 2], [4 5]])
           - b (real): Coefficients on the right hand side in Ax = b
-                         Enter b as a series of numbers starting from b[1,1] and 
-                         proceeding down the column 
+                         Enter b as a numpy array (column vector) 
                          (e.g. The 3x1 column [1 
                                                2 
                                                3] 
-                          would be entered as 1 2 3)
+                          would be entered as np.array([[1],[2], [3]])
           
           Output: 
           - The final form of the augmented matrix, [U|b]
@@ -41,31 +40,23 @@ def gaussElim(A, tol=1e-6):
           """
           ################## Inputs ##################
           
-          # Check if dimension is okay
-          try:
-               int(dim)
-          except ValueError:
-               sys.exit("Please enter a valid integer for dimension.")
-          else:
-               if dim < 2 or dim > 4:
-                    print("Dimension too low or too high. Check function help and try again.")
-                    return
-
-          
           ### Input error handling ###
           while True:
                
-               # Prompt for input. We want A and b
-               A = input(msg_A)
-               b = input(msg_b)
-               
                # Check if A is okay
                try:
-                    A = list(map(float, \
-                        A.translate(str.maketrans('', '', \
-                                        string.punctuation.replace("-",""))).split(" ")))
+                    # Get dimension
+                    dim = A.shape[0]
+                    # Check if dimension is okay
+                    if dim < 2 or dim > 4:
+                         print("Dimension too low or too high. Check function help and try again.")
+                         return
+                    # Check if matrix entries are okay
+                    for i in range(dim):
+                         for j in range(dim):
+                              A[i,j] = float(A[i,j])
                except:
-                    print("Invalid input for A. Check help for accepted input types.")
+                    print("Invalid input for A. Check help for accepted input types and size.")
                     inp = input("Do you want to try again? y or n: \n")
                     if inp == "y":
                          continue
@@ -78,9 +69,8 @@ def gaussElim(A, tol=1e-6):
                
                # Check if b is okay
                try:
-                    b = list(map(float, \
-                        b.translate(str.maketrans('', '', \
-                                        string.punctuation.replace("-",""))).split(" ")))
+                    for i in range(dim):
+                         b[i] = float(b[i])
                     break
                except:
                     print("Invalid input for b. Check help for accepted input types.")
