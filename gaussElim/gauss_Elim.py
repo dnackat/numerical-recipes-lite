@@ -16,7 +16,7 @@ def gaussElim(A, b, tol=1e-6):
                          (e.g. The 2x2 matrix [1 2 
                                                4 5] would be entered
                           as np.array([[1 2], [4 5]])
-          - b (real): Coefficients on the right hand side in Ax = b
+          - b (real, numpy array): Coefficients on the right hand side in Ax = b
                          Enter b as a numpy array (column vector) 
                          (e.g. The 3x1 column [1 
                                                2 
@@ -49,7 +49,7 @@ def gaussElim(A, b, tol=1e-6):
                     dim = A.shape[0]
                     # Check if dimension is okay
                     if dim < 2 or dim > 4:
-                         print("Dimension too low or too high. Check function help and try again.")
+                         print("Dimension of A too low or too high. Check function help and try again.")
                          return
                     # Check if matrix entries are okay
                     for i in range(dim):
@@ -69,6 +69,9 @@ def gaussElim(A, b, tol=1e-6):
                
                # Check if b is okay
                try:
+                    # Chack b's shape
+                    if not (b.shape[1] == 1 or b.shape[0] == dim):
+                         print("Dimension of b too low or too high. Check function help and try again.")
                     for i in range(dim):
                          b[i] = float(b[i])
                     break
@@ -85,20 +88,6 @@ def gaussElim(A, b, tol=1e-6):
                          return
                     
           ################## Calculations ##################
-          
-          ### Convert matrix and column vector to numpy arrays ###
-          
-          # Matrix of coefficients
-          try:
-               A = np.array(A).reshape((dim, dim))
-          except ValueError:
-               sys.exit("Dimension entered and input for A are incompatible. Try again.")
-          
-          # Right hand side coefficients (form: Ax = b)
-          try:
-               b = np.array(b).reshape((dim,1))
-          except ValueError:
-               sys.exit("Dimension entered and input for b are incompatible. Try again.")
           
           # Augmented matrix (form: [AUG|b])
           AUG = np.concatenate((A,b),axis=1)
