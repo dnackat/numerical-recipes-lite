@@ -11,12 +11,11 @@ import sys
 def gaussElim(A, tol=1e-6):
           """ 
           Inputs:
-          - A (real): Matrix of coefficients (has to be a square matrix of dimension 4 or lower)
-                         Enter A as a series of numbers separated by single spaces 
-                         starting from A[1,1] and proceeding row-wise
+          - A (real, numpy array): Matrix of coefficients (has to be a square matrix of dimension 4 or lower)
+                         Enter A as a numpy array
                          (e.g. The 2x2 matrix [1 2 
                                                4 5] would be entered
-                          as 1 2 4 5)
+                          as np.array([[1 2], [4 5]])
           - b (real): Coefficients on the right hand side in Ax = b
                          Enter b as a series of numbers starting from b[1,1] and 
                          proceeding down the column 
@@ -51,10 +50,7 @@ def gaussElim(A, tol=1e-6):
                if dim < 2 or dim > 4:
                     print("Dimension too low or too high. Check function help and try again.")
                     return
-          
-          # Messages for A and b inputs
-          msg_A = "Enter matrix A (square with dimension 3 or lower) as a series of numbers separated by a space. Start from the first element and proceed row-wise.\n"
-          msg_b = "Enter column vector b as a series of numbers separated by a space. Start from the first element proceed row-wise.\n"
+
           
           ### Input error handling ###
           while True:
