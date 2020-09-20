@@ -21,9 +21,17 @@ dx = (b-a)/n
 def f(x):
      return (1./(2.8*np.sqrt(2*np.pi)))*np.exp(-(x-69)**2/5.6)
 
-# Approximate the integral using the Simpson's rule
+#### Approximate the integral using the Simpson's rule ####
+
+# Variable to hold sum
 simp_sum = 0.0
-for i in np.arange(a,b+1,n):
+
+# x_i values
+x = np.arange(a,b+1,n)
+
+for i in range(n):
      # Set weight of first and last terms equal to unity
      if i == 0 or i == (n-1):
-         simp_sum += f(i) 
+         simp_sum += f(x(i))
+     else:
+          if (i+1) % 2 
