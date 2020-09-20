@@ -8,18 +8,20 @@ Created on Sun Sep 20 20:19:00 2020
 import numpy as np
 
 # Ends
-a = 0
-b = 96
+a = 96
+b = 100
+
+# dx: width of the interval
+dx = 2
 
 # Number of intervals
-n = 8
+n = int((b-a)/dx)
 
-# dx
-dx = (b-a)/n
+
 
 # Function definition
 def f(x):
-     return (1./(2.8*np.sqrt(2*np.pi)))*np.exp(-(x-69)**2/5.6)
+     return (1./(2.8*np.sqrt(2*np.pi)))*np.exp(-((x-69.)**2)/5.6)
 
 #### Approximate the integral using the Simpson's rule ####
 
@@ -27,11 +29,21 @@ def f(x):
 simp_sum = 0.0
 
 # x_i values
-x = np.arange(a,b+1,n)
+x = np.arange(a,b+1,dx)
 
-for i in range(n):
+for i in range(n+1):
      # Set weight of first and last terms equal to unity
-     if i == 0 or i == (n-1):
-         simp_sum += f(x(i))
+     if i == 0 or i == n:
+          simp_sum += f(x[i])
      else:
-          if (i+1) % 2 
+          # Alternating coeffs. of 2 and 4
+          if (i+1) % 2 == 0:
+               # Even index
+               simp_sum += 4.*f(x[i])
+          else:
+               # Odd index
+               simp_sum += 2.*f(x[i])
+               
+simp_sum *= dx/3.0
+
+print("\nApproximation for the integral using Simpson's rule is: %10.3E\n" %(simp_sum))
