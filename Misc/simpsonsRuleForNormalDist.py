@@ -17,8 +17,6 @@ dx = 2
 # Number of intervals
 n = int((b-a)/dx)
 
-
-
 # Function definition
 def f(x):
      return (1./(2.8*np.sqrt(2*np.pi)))*np.exp(-((x-69.)**2)/5.6)
@@ -43,7 +41,8 @@ for i in range(n+1):
           else:
                # Odd index
                simp_sum += 2.*f(x[i])
-               
+
+# Multiply sum by dx/3 for the final value               
 simp_sum *= dx/3.0
 
 print("\nApproximation for the integral using Simpson's rule is: %10.3E\n" %(simp_sum))
