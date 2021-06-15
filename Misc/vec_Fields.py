@@ -32,7 +32,7 @@ k = 2.5
 z = a*(x**2 - y**2) + b*x*y
 z1 = np.exp(k*x)*np.sin(k*y)  
 
-plt.contourf(x,y,z,cmap='plasma')
+plt.contourf(x,y,z,cmap='winter')
 
 #%% Plane curve where every point bisects the part of the tangent in the first quadrant passing through that point
 c = 2
@@ -58,4 +58,15 @@ if abs(len1-len2) < 1e-3:
      print("Close enough. P is a bisector of the tangent line.")
 else:
      print("Nope. P is not the bisector of the tangent line.")
+
+
+#%% Item response curve
+
+a = 5
+b = 0
+c = 0.33
+
+theta = np.linspace(-5,5,100)
+
+P = c + (1-c)/(1+np.exp(-a*(theta-b)))
 
