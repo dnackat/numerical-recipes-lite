@@ -67,8 +67,11 @@ b = 0
 c = 0.25
 
 theta = np.linspace(-5,5,100)
+y1 = np.ones(len(theta))
 
 P = c + (1-c)/(1+np.exp(-a*(theta-b)))
 
+plt.figure()
 plt.plot(theta,P,'r',linewidth=2)
+plt.plot(theta,y1,'--',linewidth=1)
 plt.grid()
