@@ -62,9 +62,9 @@ else:
 
 #%% Item response curve
 
-a = 5
-b = 0.1
-c = 0.33
+a = 4
+b = 0
+c = 0.25
 
 theta = np.linspace(-5,5,100)
 
