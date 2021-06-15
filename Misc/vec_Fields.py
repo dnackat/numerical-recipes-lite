@@ -63,10 +63,12 @@ else:
 #%% Item response curve
 
 a = 5
-b = 0
+b = 0.1
 c = 0.33
 
 theta = np.linspace(-5,5,100)
 
 P = c + (1-c)/(1+np.exp(-a*(theta-b)))
 
+plt.plot(theta,P,'r',linewidth=2)
+plt.grid()
