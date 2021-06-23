@@ -58,21 +58,3 @@ if abs(len1-len2) < 1e-3:
      print("Close enough. P is a bisector of the tangent line.")
 else:
      print("Nope. P is not the bisector of the tangent line.")
-
-
-#%% Item response curve
-
-a = 1
-b = -1
-c = 0
-
-theta = np.linspace(-5,5,100)
-y1 = np.ones(len(theta))
-
-P = c + (1-c)/(1+np.exp(-a*(theta-b)))
-
-plt.figure()
-plt.plot(theta,P,'r',linewidth=2)
-plt.plot(theta,y1,'--',linewidth=1)
-plt.plot(theta,np.repeat(np.min(P),len(theta)),'--',linewidth=1)
-plt.grid()
