@@ -11,3 +11,10 @@ Applied Calculus: Point price elasticity
 import numpy as np
 import matplotlib.pyplot as plt
 
+p = np.linspace(0,5.5,100)
+
+E = -29*p/(-29*p + 166)
+
+plt.figure()
+plt.plot(p,E,'b',linewidth=2)
+plt.grid()
