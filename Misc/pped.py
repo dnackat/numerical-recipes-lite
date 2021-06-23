@@ -21,14 +21,24 @@ plt.grid()
 
 #%% Price point elasticity using a nonlinear function
 
+# Price
 p = np.linspace(2,5,100)
 
+# Demand function
 q = 2000/p**3
 
+# Derivative of demand function
 dq = -6000/p**2
 
+# Price point elasticity of demand
 E = dq*p/q
 
+# Revenue function
+R = p*q
+
+# Derivative of revenue function
+dR = q + p*dq
+
 plt.figure()
-plt.plot(p,E,'b',linewidth=2)
+plt.plot(p,R,'b',linewidth=2)
 plt.grid()
