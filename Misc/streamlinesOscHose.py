@@ -29,11 +29,11 @@ x1 = (u_0/omega)*(np.cos(omega*y/v_0)-1.)
 x2 = (u_0/omega)*(np.sin(omega*y/v_0))
 
 # Create plot
-plt.figure(figsize=(8,8))
+plt.figure(figsize=(16,16))
 plt.rc('text', usetex=True)
 plt.rc('font', family='serif')
 plt.plot(x1,y,'r',linewidth=2,label=r'$t = 0$')
-plt.plot(x2,y,'b',linewidth=2,label=r'$t = \frac{\pi}{2*\omega}$')
+plt.plot(x2,y,'b',linewidth=2,label=r'$t = \frac{\pi}{2\omega}$')
 plt.xlabel(r'$x_s$')
 plt.ylabel(r'$y_s$')
 plt.legend(loc="best")
