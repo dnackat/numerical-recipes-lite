@@ -34,3 +34,10 @@ Z2 = f2(X,Y)
 Z3 = f3(X,Y)
 
 # Create plots
+plt.figure(figsize=(12,12))
+contours = plt.contour(X, Y, Z3, 20, colors='black')
+plt.clabel(contours, inline=True, fontsize=8)
+plt.imshow(Z3, extent=[-3, 3, -3, 3], origin='lower',
+           cmap='RdGy', alpha=0.5)
+plt.colorbar()
+#plt.grid(axis="both")
