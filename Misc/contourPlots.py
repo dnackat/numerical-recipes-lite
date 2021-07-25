@@ -28,15 +28,19 @@ def f2(x,y):
 def f3(x,y):
      return x**2 - y**2
 
+def f4(x,y):
+     return y**2 - x**3 + x*y - x
+
 # Calculate function values
 Z1 = f1(X,Y)
 Z2 = f2(X,Y)
 Z3 = f3(X,Y)
+Z4 = f4(X,Y)
 
 # Create plots
 plt.figure(figsize=(12,12))
-contours = plt.contour(X, Y, Z3, 20, colors='black')
-plt.clabel(contours, inline=True, fontsize=8)
+contours = plt.contour(X, Y, Z4, 15, colors='black')
+plt.clabel(contours, inline=True, fontsize=12)
 plt.imshow(Z3, extent=[-3, 3, -3, 3], origin='lower',
            cmap='RdGy', alpha=0.5)
 plt.colorbar()
