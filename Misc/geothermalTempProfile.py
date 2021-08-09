@@ -22,8 +22,7 @@ def plot_2d():
     Z = temp(X, Y)
     level_curves = [20, 30, 40, 50, 60, 70, 80, 120, 200]
 
-    # Plot the surface.
-    #plt.figure(size=(12,12))
+    # Plot the surface
     fig, ax = plt.subplots(figsize=(14,12))
     c = ax.pcolormesh(X, Y, Z, cmap='nipy_spectral', vmin=Z.min(), vmax=Z.max(), shading='auto')
     ax.set_title('Hot Spring')
