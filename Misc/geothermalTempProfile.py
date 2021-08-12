@@ -15,7 +15,7 @@ def temp(x,y):
      return 450./np.sqrt(x**2+y**2+1)+420./np.sqrt((x+10.)**2+(y-20.)**2+1)
      
 def plot_2d():
-    # Make data.
+    # Make data
     X = np.arange(-25, 35, 0.125)
     Y = np.arange(-25, 35, 0.125)
     X, Y = np.meshgrid(X, Y)
