@@ -23,15 +23,24 @@ fc = np.arange(0.,numcells+1,dx)  # Face centroids
 cc = (fc + (fc + 1.))/2.      # Cell centroids
 
 # Source terms
-S = 6.*cc*dx      # Linear source term, S*d(vol) = 6*x*(dx*1.0)
+S = 6.*cc*dx      # Linear source term, S*d(vol) = 6*x_centroid*(dx*1.0)
 
 # Vector of unknowns
-phi = np.ones((len(cc),1)) # Length should be equal to no. of cell centroids
+phi = np.ones((len(cc),1)) # Length should be equal to no. of cell centroids; 
+                              # boundary values lumped with constants in b
+                              
+# Boundary conditions for phi (included with constants in b vector)
+
 
 # Vector of constants
-b = np.zeros((len(cc)+2,1)) # Length = no. of cell centroids + no. of boundaries
+b = np.zeros((len(cc),1)) # Length = no. of cell centroids
+
+# Populate the vector of constants
+b = S 
+b[0] += Gamma/(cc[0]-fc[0])   # Add the boundary value for first face
+b[-1] += Gamma/(fc[-1]-cc[-1])     #  Add the boundary value for last face
       
-# Matrix of coefficients
+# Matrix of coefficients (size = size(b)*size(phi))
 A = np.zeros((len(b),len(phi)))
 
 # Gauss-Seidel method
