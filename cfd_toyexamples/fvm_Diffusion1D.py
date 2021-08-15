@@ -17,22 +17,22 @@ import matplotlib.pyplot as plt
 Gamma = 1.0    # Diffusivity
 
 # Create the grid
-fc = np.arange(0.,6.,1)  # Face centroids
+numcells = 5   # Number of cells in the grid
+dx = 1.   # Cell width
+fc = np.arange(0.,numcells+1,dx)  # Face centroids
 cc = (fc + (fc + 1.))/2.      # Cell centroids
-
-# Cell width
-dx = fc[1] - fc[0]
 
 # Source terms
 S = 6.*cc*dx      # Linear source term, S*d(vol) = 6*x*(dx*1.0)
 
 # Vector of unknowns
-phi = np.ones((len(cc),1)) # Length should be cell centroids, 
-                              # boundary values lumped with sources
+phi = np.ones((len(cc),1)) # Length should be equal to no. of cell centroids
+
+# Vector of constants
+b = np.zeros((len(cc)+2,1)) # Length = no. of cell centroids + no. of boundaries
       
-# Boundary conditions
-phi[0] = 10.
-phi[len(phi)-1] = 135.
+# Matrix of coefficients
+A = np.zeros((len(b),len(phi)))
 
 # Gauss-Seidel method
 def gauss(A, b, x, n):
