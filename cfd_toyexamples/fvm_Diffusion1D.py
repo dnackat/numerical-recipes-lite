@@ -51,9 +51,11 @@ for i in range(len(b)):
      if i == 0: # First boundary
           A[i,i] = Gamma*(1./(cc[i]-fc[i]) + 1./(cc[i+1]-cc[i]))
      elif i == len(b)-1: # Last boundary
-          A[i,i] = Gamma*(1./(fc[i]-cc[i]) + 1./(cc[i]-cc[i-1]))
+          A[i,i] = Gamma*(1./(fc[i+1]-cc[i]) + 1./(cc[i]-cc[i-1]))
      else: # Interior cells
-          A[i,i] = Gamma/()
+          A[i,i] = Gamma*(1./(cc[i+1]-cc[i]) + 1./(cc[i]-cc[i-1])) # Diagonal element
+          A[i,i-1] = -Gamma/(cc[i]-cc[i-1]) # Left of diagonal
+          A[i,i+1] = -Gamma/(cc[i+1]-cc[i]) # Right of diagonal
      
 
 # Gauss-Seidel iterative method
@@ -72,4 +74,9 @@ def gauss(A, b, x, n):
         if np.linalg.norm(x - xprev) < 1.e-6:
             break
      return x
+
+# Analytical (exact) solution
+x = np.linspace(0.,5.,100)
+phi_exact = 10 + 50*x - x**3
+
 
