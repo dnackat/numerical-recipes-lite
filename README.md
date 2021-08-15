@@ -2,9 +2,9 @@
 
 **Status**: *Ongoing*
 
-*These are a bunch of python programs on matrix methods (Gaussian elimination and whatnot) and numerical methods (Runge-Kutta, etc.) that I have written, am writing now, or plan to write in the near future. I'm doing these for learning and to use it in small projects. This should be fun!*    
+*These are a bunch of python programs on matrix methods (Gaussian elimination and whatnot), numerical methods (Runge-Kutta, etc.), and some simple CFD codes that I have written, am writing now, or plan to write in the near future. I'm doing these for learning and to use it in small projects. This should be fun!*    
     
-**Currently working on**: *Gauss-Jordan elimination method for matrix inverses*
+**Currently working on**: *Writing toy CFD codes as practice for the CFD using FVM course I'm currently doing*
 
 *What I've coded so far:*    
     
@@ -15,3 +15,6 @@ M3. *Permutation matrix for row and column exchanges*
 
 ### Numerical Methods    
 N1. *Newton's method* 
+
+### Computational Fluid Dynamics (CFD)
+C1. *Solution to 1D diffusion equation using the Finite-Volume method (FVM)*
