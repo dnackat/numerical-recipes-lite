@@ -21,7 +21,7 @@ r2 = np.linspace(-R,-0.1,100)
 H0 = 2.
 
 # v(theta component) = C/r
-C = 2.
+C = 5.
 
 # Acceleration due to gravity
 g = 9.805
