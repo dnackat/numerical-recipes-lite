@@ -27,9 +27,22 @@ dx = fc[1] - fc[0]
 S = 6.*cc*dx      # Linear source term, S*d(vol) = 6*x*(dx*1.0)
 
 # Vector of unknowns
-phi = np.ones((len(cc)+2,1)) # Length should be cell centroids + no. of boundary faces
+phi = np.ones((len(cc),1)) # Length should be cell centroids, 
+                              # boundary values lumped with sources
       
 # Boundary conditions
 phi[0] = 10.
 phi[len(phi)-1] = 135.
+
+# Gauss-Seidel method
+def gauss(A, b, x, n):
+
+    L = np.tril(A)
+    U = A - L
+    for i in range(n):
+        xprev = x
+        x = np.dot(np.linalg.inv(L), b - np.dot(U, x))
+        if np.linalg.norm(x - xprev) < 1.e-6:
+            break
+    return x
 
