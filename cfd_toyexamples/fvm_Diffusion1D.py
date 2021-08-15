@@ -19,9 +19,9 @@ Gamma = 1.0    # Diffusivity
 
 # Create the grid
 numcells = 5   # Number of cells in the grid
-dx = 1.   # Cell width
-fc = np.arange(0.,numcells+1,dx)  # Face centroids
-cc = (fc[:-1] + (fc[:-1] + 1.))/2.      # Cell centroids
+dx = 1   # Cell width
+fc = np.arange(0.,numcells+dx,dx)  # Face centroids
+cc = (fc[:-1] + (fc[:-1] + dx))/2.      # Cell centroids
 
 # Source terms
 S = 6.*cc*dx      # Linear source term, S*d(vol) = 6*x_centroid*(dx*1.0)
@@ -73,7 +73,7 @@ def gauss(A, b, x, n):
      for i in range(n):
         xprev = x
         x = np.dot(np.linalg.inv(L), b - np.dot(U, x))
-        if np.linalg.norm(x - xprev) < 1.e-6:
+        if np.linalg.norm(x - xprev) < 1.e-4:
             print("\n")
             print("Converged in",i+1,"iterations.")
             break
@@ -91,6 +91,27 @@ print("\n")
 print("---------- Solution ----------")
 print("\n")
 print("PHI values from FVM method:\n")
-print(phi_fvm)
+print(phi_fvm.round(2))
 
+# Plot the FVM and exact solution
 
+cc_plot = np.zeros(len(cc)+2)   # Add boundary points just for plotting
+cc_plot[-1] = fc[len(cc)]
+cc_plot[1:-1] = cc
+phi_plot = np.zeros(len(cc)+2)  # Add boundary points just for plotting
+phi_plot[0] = phi_first
+phi_plot[-1] = phi_last
+phi_plot[1:-1] = phi_fvm.reshape(len(phi_fvm))
+
+plt.figure(figsize=(16,16))
+plt.plot(x,phi_exact,'k',linewidth=1,label="Exact solution")
+#plt.plot(cc_plot,phi_plot,'r',linewidth=2)
+plt.scatter(cc_plot,phi_plot,c="red",marker="o",label="FVM soluton")
+plt.grid(axis="both")
+plt.xlim((0.,5.))
+plt.xlabel(r'$x_s$',fontsize=16)
+plt.ylabel(r'$\phi$',fontsize=16)
+#plt.ylim((phi_exact.min(),phi_exact.max()))
+plt.legend(loc="best",fontsize=16)
+plt.title("Comparison between CFD and exact solution for the 1D Diffusion Equation"\
+          ,fontsize=20) 
