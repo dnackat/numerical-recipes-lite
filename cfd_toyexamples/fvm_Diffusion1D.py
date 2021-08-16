@@ -73,7 +73,7 @@ def gauss(A, b, x, n):
      for i in range(n):
         xprev = x
         x = np.dot(np.linalg.inv(L), b - np.dot(U, x))
-        if np.linalg.norm(x - xprev) < 1.e-4:
+        if np.linalg.norm(x - xprev) < 1.e-6:
             print("\n")
             print("Converged in",i+1,"iterations.")
             break
@@ -94,7 +94,6 @@ print("PHI values from FVM method:\n")
 print(phi_fvm.round(2))
 
 # Plot the FVM and exact solution
-
 cc_plot = np.zeros(len(cc)+2)   # Add boundary points just for plotting
 cc_plot[-1] = fc[len(cc)]
 cc_plot[1:-1] = cc
@@ -104,14 +103,14 @@ phi_plot[-1] = phi_last
 phi_plot[1:-1] = phi_fvm.reshape(len(phi_fvm))
 
 plt.figure(figsize=(16,16))
-plt.plot(x,phi_exact,'k',linewidth=1,label="Exact solution")
-#plt.plot(cc_plot,phi_plot,'r',linewidth=2)
-plt.scatter(cc_plot,phi_plot,c="red",marker="o",label="FVM soluton")
+plt.plot(x,phi_exact,'k',linewidth=1,label="Exact solution") # Plot of the exact solution
+plt.scatter(cc_plot,phi_plot,c="red",marker="o",s=200,label="FVM soluton") # Scatter plot of FVM resluts
+for c in cc:
+     plt.axvline(x=c,color='b',linestyle='--',linewidth=0.5)    # Vertical lines from centroid for clarity
 plt.grid(axis="both")
 plt.xlim((0.,5.))
-plt.xlabel(r'$x_s$',fontsize=16)
+plt.xlabel(r'$x$',fontsize=16)
 plt.ylabel(r'$\phi$',fontsize=16)
-#plt.ylim((phi_exact.min(),phi_exact.max()))
 plt.legend(loc="best",fontsize=16)
-plt.title("Comparison between CFD and exact solution for the 1D Diffusion Equation"\
+plt.title("Comparison between FVM and exact solution for the 1D Diffusion Equation"\
           ,fontsize=20) 
