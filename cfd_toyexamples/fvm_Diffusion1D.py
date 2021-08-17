@@ -46,8 +46,7 @@ b[-1] += (Gamma/(fc[-1]-cc[-1]))*phi_last  #  Add the boundary value for last fa
 A = np.zeros((len(b),len(phi)))
 
 # Populate A. It is sparse and diagonally dominant, so a single loop should suffice
-for i in range(len(b)):
-     # First and last rows correspond to boundary cells 
+for i in range(len(b)): 
      if i == 0: # First boundary
           A[i,i] = Gamma*(1./(cc[i]-fc[i]) + 1./(cc[i+1]-cc[i]))
           A[i,i+1] = -Gamma/(cc[i+1]-cc[i]) # Right of diagonal
