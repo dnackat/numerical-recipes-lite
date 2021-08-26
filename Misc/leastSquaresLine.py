@@ -12,7 +12,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Data
-data = [(0,4.4),(1,39.41),(2,54.83),(3,50.31)]
+X = \
+"65.2, 21.9,-14.1,29.6,2.1,64.5,5.5,36.7,43.0,6.2,21.6,-1.7,-12.1,22.8,41.7,68.3,64.2,53.0,62.8,-14.5"
+Y = \
+"-48.2,53.9,86.1,15.1,68.3,-41.7,80.8,2.6,1.8,73.0,53.0,49.3,77.7,27.7,9.5,-37.5,-30.5,-37.1,-28.8,67.2"
+
+dataX = [float(x) for x in X.split(",")]
+dataY = [float(y) for y in Y.split(",")]
+
+data = []
+
+for i in range(len(dataX)):
+     data.append((dataX[i],dataY[i])) 
 
 def lsLine(data):
      """ This function fits a line of the form ax + b to data of
