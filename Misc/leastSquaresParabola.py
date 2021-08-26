@@ -34,3 +34,20 @@ for point in data:
      b3 += point[0]
      c3 += 1
      d3 += point[1]
+     
+# Construct the system
+A = np.array([[a1,b1,c1],[a2,b2,c2],[a3,b3,c3]])
+b = np.array([[d1],[d2],[d3]])
+
+# Solve the system
+x = np.dot(np.linalg.inv(A),b)
+
+# Plot
+xp = np.linspace(0,np.max([data[i][0] for i in range(len(data))]))
+yp = x[0]*xp**2 + x[1]*xp + x[2]
+plt.figure(figsize=(16,16)) 
+plt.xlabel(r'$x$',fontsize=16)
+plt.ylabel(r'$y$',fontsize=16)
+plt.scatter([data[i][0] for i in range(len(data))],[data[i][1] for i in range(len(data))],s=150,color='r')
+plt.grid(axis="both")
+plt.plot(xp,yp,linewidth=2)
