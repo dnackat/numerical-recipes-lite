@@ -12,7 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Data
-data = [(0,1),(2,1),(4,3)]
+data = [(1,4.4),(2,39.41),(3,54.83),(4,50.31)]
 
 def lsParabola(data):
      """ This function fits a parabola of the form ax^2 + bx + c to data of
@@ -47,7 +47,8 @@ def lsParabola(data):
      x = np.dot(np.linalg.inv(A),b)
      
      # Plot
-     xp = np.linspace(0,np.max([data[i][0] for i in range(len(data))]))
+     xp = np.linspace(np.min([data[i][0] for i in range(len(data))]), \
+                      np.max([data[i][0] for i in range(len(data))]))
      yp = x[0]*xp**2 + x[1]*xp + x[2]
      plt.figure(figsize=(16,16)) 
      plt.xlabel(r'$x$',fontsize=16)
