@@ -47,10 +47,10 @@ plt.xlabel(r'$x$',fontsize=20)
 plt.ylabel(r'$y$',fontsize=20)
 
 # Level curves
-level_curves = [-10, -6, 0, 10, 30, 40, 50, 60, 75,100]
+level_curves = [-10, -6, 0, 10, 30, 40, 50, 60, 75, 100, 120, 135]
 #c = plt.pcolormesh(xx, yy, f, cmap='nipy_spectral', vmin=f.min(), vmax=f.max(), shading='auto')
 plt.axis([xx.min(), xx.max(), yy.min(), yy.max()])
-CS = plt.contour(xx, yy, f, level_curves, colors='black', linewidths=0.75)
+CS = plt.contour(xx, yy, f, level_curves, colors='black', linewidths=1.5)
 plt.clabel(CS, inline=True, fmt='%1.0f', fontsize=16)
 #plt.colorbar(c)
 plt.show()
