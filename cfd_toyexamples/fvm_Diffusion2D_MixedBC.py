@@ -49,7 +49,7 @@ cell_volume = delta_x*delta_y*thickness
 
 #%%
 # Volumetric source. Depends on cell centroid values
-S = 100.*(1. + 5*cxx + 5*cyy)*cell_volume      # Linear source term, S*d(vol) = 6*x_centroid*(dx*1.0)
+S = 100.*(1. + 5*cxx + 5*cyy)*cell_volume
 
 #%%
 # Vector of unknown temperatures
@@ -70,7 +70,7 @@ b = np.zeros((len(cc_x),1)) # Length = no. of cell centroids
 # Populate the vector of constants
 b = S.reshape((len(S),1))     # Source term contribution at every cell centroid
 
-# Face indices
+# Boundary face indices
 left_face_indices = np.array([i for i in range(0,len(b),numcells)])
 right_face_indices = np.array([i for i in range(numcells-1,len(b),numcells)])
 top_face_indices = np.array([i for i in range(len(b)-numcells,len(b))])
@@ -84,22 +84,41 @@ b[right_face_indices] += k*area_x*T_right/del_x_b # Dirichlet boundary on right 
 
 #%%      
 # Matrix of coefficients (size = size(b)*size(T))
-A = np.zeros((len(b),len(T)))
+A = np.zeros((len(b),len(b)))
+#%%
+# Populate A. It is sparse and diagonally dominant.
+for i in range(len(b)): # Fill from bottom to top
+          if i in bottom_face_indices: # Bottom face cells
+               if i == 0: # Bottom left cell
+                    A[i,i+1] = -k*area_x/del_x # East cell
+                    A[i,i+numcells] = -k*area_y/del_y # North cell
+                    A[i,i] = abs(A[i,i+1]) + abs(A[i,i+numcells]) + mixed_bc_coeff*area_y 
+               elif i == numcells-1: # Bottom right cell
+                    A[i,i-1] = -k*area_x/del_x # West cell
+                    A[i,i+numcells] = -k*area_y/del_y # North cell
+                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i+numcells]) + mixed_bc_coeff*area_y 
+               else: # Remaining bottom cells
+                    A[i,i+1] = -k*area_x/del_x # East cell
+                    A[i,i-1] = -k*area_x/del_x # West cell
+                    A[i,i+numcells] = -k*area_y/del_y # North cell
+                    A[i,i] = abs(A[i,i+1]) + abs(A[i,i-1]) + abs(A[i,i+numcells]) + \
+                         mixed_bc_coeff*area_y
+          elif i in top_face_indices: # Top face cells
+               if i == len(b)-numcells: # Top left cell
+                    A[i,i+1] = -k*area_x/del_x # East cell
+                    A[i,i-numcells] = -k*area_y/del_y # South cell
+                    A[i,i] = abs(A[i,i+1]) + abs(A[i,i-numcells]) + k*area_x*T_left/del_x_b \
+                         + k*area_x*T_left/del_x_b
 
-# Populate A. It is sparse and diagonally dominant, so a single loop should suffice
-for i in range(len(b)): 
-     if i == 0: # First boundary
-          A[i,i] = k*(1./(cc[i]-fc[i]) + 1./(cc[i+1]-cc[i]))
-          A[i,i+1] = -k/(cc[i+1]-cc[i]) # Right of diagonal
-     elif i == len(b)-1: # Last boundary
-          A[i,i] = k*(1./(fc[i+1]-cc[i]) + 1./(cc[i]-cc[i-1]))
-          A[i,i-1] = -k/(cc[i]-cc[i-1]) # Left of diagonal
-     else: # Interior cells
-          A[i,i] = k*(1./(cc[i+1]-cc[i]) + 1./(cc[i]-cc[i-1])) # Diagonal element
-          A[i,i-1] = -k/(cc[i]-cc[i-1]) # Left of diagonal
-          A[i,i+1] = -k/(cc[i+1]-cc[i]) # Right of diagonal
-     
+          # else: # Interior cells
+          #      if i != len(b) - 1:
+          #            A[i,i-1] = k*area_x/del_x # West cell
+          #            A[i,i+1] = k*area_x/del_x # East cell
+          #            A[i+1,i] = k*area_y/del_y # North cell
+          #            A[i-1,i] = k*area_y/del_y # South cell
+          #            A[i,i] = A[i,i-1] + A[i,i+1] + A[i+1,i] + A[i-1,i] # Diagonal element
 
+#%%
 # Gauss-Seidel iterative method
 def gauss(A, b, x, n):
      """ This is a function that uses the Gauss-Seidel iterative scheme from 
