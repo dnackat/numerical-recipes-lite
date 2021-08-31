@@ -62,6 +62,8 @@ T_left = 500.     # T in K on left boundary face
 T_top = 500.      # T in K on top boundary face
 T_inf = 300.      # T in K of flow across bottom face
 
+mixed_bc_coeff = (h*k/del_y_b)/(h + k/del_y_b) # Coeff for bottom face with mixed BC
+
 # Vector of constants.
 b = np.zeros((len(cc_x),1)) # Length = no. of cell centroids
 
@@ -107,11 +109,7 @@ def gauss(A, b, x, n):
      return x
 
 # Solve the system 
-T_fvm = gauss(A, b, T, 100)
-
-# Analytical (exact) solution
-x = np.linspace(0.,5.,100)
-T_exact = 10 + 50*x - x**3
+T_fvm = gauss(A, b, T, 1000)
 
 # Print the result
 print("\n")
@@ -120,7 +118,7 @@ print("\n")
 print("T values from FVM method:\n")
 print(T_fvm.round(2))
 
-# Plot the FVM and exact solution
+# Plot the FVM solution on the central x and y axes
 cc_plot = np.zeros(len(cc)+2)   # Add boundary points just for plotting
 cc_plot[-1] = fc[len(cc)]
 cc_plot[1:-1] = cc
@@ -130,7 +128,6 @@ T_plot[-1] = T_last
 T_plot[1:-1] = T_fvm.reshape(len(T_fvm))
 
 plt.figure(figsize=(16,16))
-plt.plot(x,T_exact,'k',linewidth=1,label="Exact solution") # Plot of the exact solution
 plt.scatter(cc_plot,T_plot,c="red",marker="o",s=200,label="FVM soluton") # Scatter plot of FVM resluts
 for c in cc:
      plt.axvline(x=c,color='b',linestyle='--',linewidth=0.5)    # Vertical lines from centroid for clarity
