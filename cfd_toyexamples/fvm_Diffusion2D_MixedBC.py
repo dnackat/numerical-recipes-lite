@@ -16,7 +16,7 @@ The physics is governed by the equation:
 import numpy as np
 import matplotlib.pyplot as plt
 
-#%%
+
 # Parameters
 k = 1.0    # Constant thermal conductivity in W/m-K
 h = 10.0   # Constant convective heat transfer coefficient in W/m2-K
@@ -47,14 +47,14 @@ area_x = delta_y*thickness # Areas of faces with normal vector aligned with the 
 area_y = delta_x*thickness # Areas of faces with normal vector aligned with the y-axis
 cell_volume = delta_x*delta_y*thickness
 
-#%%
 # Volumetric source. Depends on cell centroid values
 S = 100.*(1. + 5*cxx + 5*cyy)*cell_volume
 
-#%%
+
 # Vector of unknown temperatures
-T = np.ones((len(cc_x),1)) # Length should be equal to no. of cell centroids; 
+T = np.ones((len(cxx),1)) # Length should be equal to no. of cell centroids; 
                            # boundary values lumped with constants in b vector
+
                               
 # Boundary conditions for T (included with constants in b vector)
 T_right = 500.    # T in K on right boundary face
@@ -64,7 +64,7 @@ T_inf = 300.      # T in K of flow across bottom face
 
 mixed_bc_coeff = (h*k/del_y_b)/(h + k/del_y_b) # Coeff for bottom face with mixed BC
 
-# Vector of constants.
+# Vector of constants
 b = np.zeros((len(cc_x),1)) # Length = no. of cell centroids
 
 # Populate the vector of constants
@@ -82,10 +82,10 @@ b[top_face_indices] += k*area_y*T_top/del_y_b # Dirichlet boundary on top face
 b[left_face_indices] += k*area_x*T_left/del_x_b # Dirichlet boundary on left faces
 b[right_face_indices] += k*area_x*T_right/del_x_b # Dirichlet boundary on right faces
 
-#%%      
+  
 # Matrix of coefficients (size = size(b)*size(T))
 A = np.zeros((len(b),len(b))) # Each row corresonds to a cell centroid
-#%%
+
 # Populate A. It is sparse and diagonally dominant, so a single loop should suffice.
 for i in range(len(b)): # Fill from bottom to top
           # Bottom boundary cells including corners
@@ -144,13 +144,13 @@ for i in range(len(b)): # Fill from bottom to top
           else: 
                     A[i,i-1] = -k*area_x/del_x # West cell
                     A[i,i+1] = -k*area_x/del_x # East cell
-                    A[i+numcells,i] = -k*area_y/del_y # North cell
-                    A[i-numcells,i] = -k*area_y/del_y # South cell
-                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i+1]) + abs(A[i+numcells,i]) + \
-                         abs(A[i-numcells,i]) # Diagonal element
+                    A[i,i+numcells] = -k*area_y/del_y # North cell
+                    A[i,i-numcells] = -k*area_y/del_y # South cell
+                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i+1]) + abs(A[i,i+numcells]) + \
+                         abs(A[i,i-numcells]) # Diagonal element
 
-#%%
-# Gauss-Seidel iterative method
+
+######## Gauss-Seidel iterative method ########
 def gauss(A, b, x, n):
      """ This is a function that uses the Gauss-Seidel iterative scheme from 
          numerical linear algebra to solve a linear system of the form 
@@ -169,6 +169,8 @@ def gauss(A, b, x, n):
             break
      return x
 
+########################
+
 # Solve the system 
 T_fvm = gauss(A, b, T, 1000)
 
@@ -180,22 +182,22 @@ print("T values from FVM method:\n")
 print(T_fvm.round(2))
 
 # Plot the FVM solution on the central x and y axes
-cc_plot = np.zeros(len(cc)+2)   # Add boundary points just for plotting
-cc_plot[-1] = fc[len(cc)]
-cc_plot[1:-1] = cc
-T_plot = np.zeros(len(cc)+2)  # Add boundary points just for plotting
-T_plot[0] = T_first
-T_plot[-1] = T_last
-T_plot[1:-1] = T_fvm.reshape(len(T_fvm))
+# cc_plot = np.zeros(len(cc)+2)   # Add boundary points just for plotting
+# cc_plot[-1] = fc[len(cc)]
+# cc_plot[1:-1] = cc
+# T_plot = np.zeros(len(cc)+2)  # Add boundary points just for plotting
+# T_plot[0] = T_first
+# T_plot[-1] = T_last
+# T_plot[1:-1] = T_fvm.reshape(len(T_fvm))
 
-plt.figure(figsize=(16,16))
-plt.scatter(cc_plot,T_plot,c="red",marker="o",s=200,label="FVM soluton") # Scatter plot of FVM resluts
-for c in cc:
-     plt.axvline(x=c,color='b',linestyle='--',linewidth=0.5)    # Vertical lines from centroid for clarity
-plt.grid(axis="both")
-plt.xlim((0.,5.))
-plt.xlabel(r'$x$',fontsize=16)
-plt.ylabel(r'$\T$',fontsize=16)
-plt.legend(loc="best",fontsize=16)
-plt.title("Comparison between FVM and exact solution for the 1D Diffusion Equation"\
-          ,fontsize=20) 
+# plt.figure(figsize=(16,16))
+# plt.scatter(cc_plot,T_plot,c="red",marker="o",s=200,label="FVM soluton") # Scatter plot of FVM resluts
+# for c in cc:
+#      plt.axvline(x=c,color='b',linestyle='--',linewidth=0.5)    # Vertical lines from centroid for clarity
+# plt.grid(axis="both")
+# plt.xlim((0.,5.))
+# plt.xlabel(r'$x$',fontsize=16)
+# plt.ylabel(r'$\T$',fontsize=16)
+# plt.legend(loc="best",fontsize=16)
+# plt.title("Comparison between FVM and exact solution for the 1D Diffusion Equation"\
+#           ,fontsize=20) 
