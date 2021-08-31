@@ -86,9 +86,10 @@ b[right_face_indices] += k*area_x*T_right/del_x_b # Dirichlet boundary on right 
 # Matrix of coefficients (size = size(b)*size(T))
 A = np.zeros((len(b),len(b))) # Each row corresonds to a cell centroid
 #%%
-# Populate A. It is sparse and diagonally dominant.
+# Populate A. It is sparse and diagonally dominant, so a single loop should suffice.
 for i in range(len(b)): # Fill from bottom to top
-          if i in bottom_face_indices: # Bottom face cells
+          # Bottom boundary cells including corners
+          if i in bottom_face_indices: 
                if i == 0: # Bottom left cell
                     A[i,i+1] = -k*area_x/del_x # East cell
                     A[i,i+numcells] = -k*area_y/del_y # North cell
@@ -105,29 +106,48 @@ for i in range(len(b)): # Fill from bottom to top
                     A[i,i+numcells] = -k*area_y/del_y # North cell
                     A[i,i] = abs(A[i,i+1]) + abs(A[i,i-1]) + abs(A[i,i+numcells]) + \
                          mixed_bc_coeff*area_y
-          elif i in top_face_indices: # Top face cells
+          # Top boundary cells including corners
+          elif i in top_face_indices: 
                if i == len(b)-numcells: # Top left cell
                     A[i,i+1] = -k*area_x/del_x # East cell
                     A[i,i-numcells] = -k*area_y/del_y # South cell
-                    A[i,i] = abs(A[i,i+1]) + abs(A[i,i-numcells]) + k*area_x*T_left/del_x_b \
-                         + k*area_x*T_top/del_x_b
+                    A[i,i] = abs(A[i,i+1]) + abs(A[i,i-numcells]) + k*area_x/del_x_b \
+                         + k*area_x/del_x_b
                if i == len(b)-1: # Top right cell
                     A[i,i-1] = -k*area_x/del_x # West cell
                     A[i,i-numcells] = -k*area_y/del_y # South cell
-                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i-numcells]) + k*area_x*T_right/del_x_b \
-                         + k*area_x*T_top/del_x_b
+                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i-numcells]) + k*area_x/del_x_b \
+                         + k*area_x/del_x_b
                else: # Remaining top faces
                     A[i,i+1] = -k*area_x/del_x # East cell
                     A[i,i-1] = -k*area_x/del_x # West cell
                     A[i,i-numcells] = -k*area_y/del_y # South cell
-                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i+1]) + abs(A[i,i-numcells]) + k*area_x*T_top/del_x_b
-          # else: # Interior cells
-          #      if i != len(b) - 1:
-          #            A[i,i-1] = k*area_x/del_x # West cell
-          #            A[i,i+1] = k*area_x/del_x # East cell
-          #            A[i+1,i] = k*area_y/del_y # North cell
-          #            A[i-1,i] = k*area_y/del_y # South cell
-          #            A[i,i] = A[i,i-1] + A[i,i+1] + A[i+1,i] + A[i-1,i] # Diagonal element
+                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i+1]) + abs(A[i,i-numcells]) \
+                         + k*area_x/del_x_b
+          # Right boundary cells excluding corners
+          elif i in right_face_indices:
+               if i != numcells-1 and i != len(b)-1:
+                    A[i,i-1] = -k*area_x/del_x # West cell
+                    A[i,i+numcells] = -k*area_y/del_y # North cell
+                    A[i,i-numcells] = -k*area_y/del_y # South cell
+                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i+numcells]) + abs(A[i,i-numcells]) \
+                         + k*area_x/del_x_b
+          # Left boundary cells excluding corners
+          elif i in left_face_indices: 
+               if i != 0 and i != len(b)-numcells: 
+                    A[i,i+1] = -k*area_x/del_x # East cell
+                    A[i,i+numcells] = -k*area_x/del_x # North cell
+                    A[i,i-numcells] = -k*area_y/del_y # South cell
+                    A[i,i] = abs(A[i,i+1]) + abs(A[i,i+numcells]) + abs(A[i,i-numcells]) \
+                         + k*area_x/del_x_b
+          # Interior cells
+          else: 
+                    A[i,i-1] = -k*area_x/del_x # West cell
+                    A[i,i+1] = -k*area_x/del_x # East cell
+                    A[i+numcells,i] = -k*area_y/del_y # North cell
+                    A[i-numcells,i] = -k*area_y/del_y # South cell
+                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i+1]) + abs(A[i+numcells,i]) + \
+                         abs(A[i-numcells,i]) # Diagonal element
 
 #%%
 # Gauss-Seidel iterative method
