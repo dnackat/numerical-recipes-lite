@@ -84,7 +84,7 @@ b[right_face_indices] += k*area_x*T_right/del_x_b # Dirichlet boundary on right 
 
 #%%      
 # Matrix of coefficients (size = size(b)*size(T))
-A = np.zeros((len(b),len(b)))
+A = np.zeros((len(b),len(b))) # Each row corresonds to a cell centroid
 #%%
 # Populate A. It is sparse and diagonally dominant.
 for i in range(len(b)): # Fill from bottom to top
@@ -92,11 +92,13 @@ for i in range(len(b)): # Fill from bottom to top
                if i == 0: # Bottom left cell
                     A[i,i+1] = -k*area_x/del_x # East cell
                     A[i,i+numcells] = -k*area_y/del_y # North cell
-                    A[i,i] = abs(A[i,i+1]) + abs(A[i,i+numcells]) + mixed_bc_coeff*area_y 
+                    A[i,i] = abs(A[i,i+1]) + abs(A[i,i+numcells]) + mixed_bc_coeff*area_y \
+                         + k*area_x/del_x_b
                elif i == numcells-1: # Bottom right cell
                     A[i,i-1] = -k*area_x/del_x # West cell
                     A[i,i+numcells] = -k*area_y/del_y # North cell
-                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i+numcells]) + mixed_bc_coeff*area_y 
+                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i+numcells]) + mixed_bc_coeff*area_y \
+                         + k*area_x/del_x_b
                else: # Remaining bottom cells
                     A[i,i+1] = -k*area_x/del_x # East cell
                     A[i,i-1] = -k*area_x/del_x # West cell
@@ -108,8 +110,17 @@ for i in range(len(b)): # Fill from bottom to top
                     A[i,i+1] = -k*area_x/del_x # East cell
                     A[i,i-numcells] = -k*area_y/del_y # South cell
                     A[i,i] = abs(A[i,i+1]) + abs(A[i,i-numcells]) + k*area_x*T_left/del_x_b \
-                         + k*area_x*T_left/del_x_b
-
+                         + k*area_x*T_top/del_x_b
+               if i == len(b)-1: # Top right cell
+                    A[i,i-1] = -k*area_x/del_x # West cell
+                    A[i,i-numcells] = -k*area_y/del_y # South cell
+                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i-numcells]) + k*area_x*T_right/del_x_b \
+                         + k*area_x*T_top/del_x_b
+               else: # Remaining top faces
+                    A[i,i+1] = -k*area_x/del_x # East cell
+                    A[i,i-1] = -k*area_x/del_x # West cell
+                    A[i,i-numcells] = -k*area_y/del_y # South cell
+                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i+1]) + abs(A[i,i-numcells]) + k*area_x*T_top/del_x_b
           # else: # Interior cells
           #      if i != len(b) - 1:
           #            A[i,i-1] = k*area_x/del_x # West cell
