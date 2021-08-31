@@ -51,7 +51,7 @@ cell_volume = delta_x*delta_y*thickness
 # Volumetric source. Depends on cell centroid values
 S = 100.*(1. + 5*cxx + 5*cyy)*cell_volume      # Linear source term, S*d(vol) = 6*x_centroid*(dx*1.0)
 
- #%%
+#%%
 # Vector of unknown temperatures
 T = np.ones((len(cc_x),1)) # Length should be equal to no. of cell centroids; 
                            # boundary values lumped with constants in b vector
@@ -68,10 +68,21 @@ mixed_bc_coeff = (h*k/del_y_b)/(h + k/del_y_b) # Coeff for bottom face with mixe
 b = np.zeros((len(cc_x),1)) # Length = no. of cell centroids
 
 # Populate the vector of constants
-b = S.reshape((len(S),1))     # Source term contribution
-b[0] += (k/(cc[0]-fc[0]))*T_first    # Add the boundary value for first face
-b[-1] += (k/(fc[-1]-cc[-1]))*T_last  #  Add the boundary value for last face
-      
+b = S.reshape((len(S),1))     # Source term contribution at every cell centroid
+
+# Face indices
+left_face_indices = np.array([i for i in range(0,len(b),numcells)])
+right_face_indices = np.array([i for i in range(numcells-1,len(b),numcells)])
+top_face_indices = np.array([i for i in range(len(b)-numcells,len(b))])
+bottom_face_indices = np.array([i for i in range(0,numcells)])
+
+# Contributions to b from boundaries 
+b[bottom_face_indices] += mixed_bc_coeff*area_y*T_inf # Mixed BC contribution on bottom face
+b[top_face_indices] += k*area_y*T_top/del_y_b # Dirichlet boundary on top face
+b[left_face_indices] += k*area_x*T_left/del_x_b # Dirichlet boundary on left faces
+b[right_face_indices] += k*area_x*T_right/del_x_b # Dirichlet boundary on right faces
+
+#%%      
 # Matrix of coefficients (size = size(b)*size(T))
 A = np.zeros((len(b),len(T)))
 
