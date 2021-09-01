@@ -20,5 +20,5 @@ N3. *Best fit line for data using least-squares approximation*
 N4. *Best fit parabola for data using least-squares approximation* 
 
 ### Computational Fluid Dynamics (CFD)
-C1. *Solution to 1D diffusion equation using the Finite-Volume method (FVM)*
+C1. *Solution to 1D diffusion equation using the Finite-Volume method (FVM)*    
 C2. *Solution to 2D heat diffusion equation with mixed boundary conditions using the Finite-Volume method (FVM)*
