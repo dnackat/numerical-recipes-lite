@@ -65,7 +65,7 @@ T_inf = 300.      # T in K of flow across bottom face
 mixed_bc_coeff = (h*k/del_y_b)/(h + k/del_y_b) # Coeff for bottom face with mixed BC
 
 # Vector of constants
-b = np.zeros((len(cc_x),1)) # Length = no. of cell centroids
+b = np.zeros((len(cxx),1)) # Length = no. of cell centroids
 
 # Populate the vector of constants
 b = S.reshape((len(S),1))     # Source term contribution at every cell centroid
@@ -81,8 +81,8 @@ b[bottom_face_indices] += mixed_bc_coeff*area_y*T_inf # Mixed BC contribution on
 b[top_face_indices] += k*area_y*T_top/del_y_b # Dirichlet boundary on top face
 b[left_face_indices] += k*area_x*T_left/del_x_b # Dirichlet boundary on left faces
 b[right_face_indices] += k*area_x*T_right/del_x_b # Dirichlet boundary on right faces
-
   
+
 # Matrix of coefficients (size = size(b)*size(T))
 A = np.zeros((len(b),len(b))) # Each row corresonds to a cell centroid
 
@@ -111,12 +111,12 @@ for i in range(len(b)): # Fill from bottom to top
                if i == len(b)-numcells: # Top left cell
                     A[i,i+1] = -k*area_x/del_x # East cell
                     A[i,i-numcells] = -k*area_y/del_y # South cell
-                    A[i,i] = abs(A[i,i+1]) + abs(A[i,i-numcells]) + k*area_x/del_x_b \
+                    A[i,i] = abs(A[i,i+1]) + abs(A[i,i-numcells]) + k*area_y/del_y_b \
                          + k*area_x/del_x_b
                if i == len(b)-1: # Top right cell
                     A[i,i-1] = -k*area_x/del_x # West cell
                     A[i,i-numcells] = -k*area_y/del_y # South cell
-                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i-numcells]) + k*area_x/del_x_b \
+                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i-numcells]) + k*area_y/del_y_b \
                          + k*area_x/del_x_b
                else: # Remaining top faces
                     A[i,i+1] = -k*area_x/del_x # East cell
@@ -136,7 +136,7 @@ for i in range(len(b)): # Fill from bottom to top
           elif i in left_face_indices: 
                if i != 0 and i != len(b)-numcells: 
                     A[i,i+1] = -k*area_x/del_x # East cell
-                    A[i,i+numcells] = -k*area_x/del_x # North cell
+                    A[i,i+numcells] = -k*area_y/del_y # North cell
                     A[i,i-numcells] = -k*area_y/del_y # South cell
                     A[i,i] = abs(A[i,i+1]) + abs(A[i,i+numcells]) + abs(A[i,i-numcells]) \
                          + k*area_x/del_x_b
@@ -176,10 +176,20 @@ T_fvm = gauss(A, b, T, 1000)
 
 # Print the result
 print("\n")
+print("Vector of constants is:\n")
+print(b.reshape((numcells,numcells)))
+print("\n")
+print("Coefficient matrix is:\n")
+print(A)
+print("\n")
 print("---------- Solution ----------")
 print("\n")
 print("T values from FVM method:\n")
-print(T_fvm.round(2))
+print(T_fvm.reshape((numcells,numcells)).round(2))
+
+# plt.plot(cc_x,T_fvm[int(len(T_fvm)/2):int(len(T_fvm)/2)+numcells],'r',label='xcenter')
+# plt.plot(cc_y,T_fvm[[2,7,12,17,22]],'b',label='ycenter')
+# plt.legend()
 
 # Plot the FVM solution on the central x and y axes
 # cc_plot = np.zeros(len(cc)+2)   # Add boundary points just for plotting
