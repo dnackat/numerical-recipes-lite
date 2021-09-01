@@ -23,7 +23,7 @@ h = 10.0   # Constant convective heat transfer coefficient in W/m2-K
 domain_length = 1.0 # In both x and y directions in m
 
 # Create the grid
-numcells = 5   # Number of cells in the x and y directions
+numcells = 25   # Number of cells in the x and y directions
 fc_x = np.linspace(0.,domain_length,numcells+1)  # x face centroids
 fc_y = np.linspace(0.,domain_length,numcells+1)  # y face centroids
 fxx = np.tile(fc_x,numcells+1)       # Long vector of x face centroids
@@ -173,6 +173,7 @@ def gauss(A, b, x, n):
 
 # Solve the system 
 T_fvm = gauss(A, b, T, 1000)
+Z = T_fvm.reshape((numcells,numcells))
 
 # Print the result
 print("\n")
@@ -185,29 +186,26 @@ print("\n")
 print("---------- Solution ----------")
 print("\n")
 print("T values from FVM method:\n")
-print(T_fvm.reshape((numcells,numcells)).round(2))
+print(Z.round(2))
 
-# plt.plot(cc_x,T_fvm[int(len(T_fvm)/2):int(len(T_fvm)/2)+numcells],'r',label='xcenter')
-# plt.plot(cc_y,T_fvm[[2,7,12,17,22]],'b',label='ycenter')
-# plt.legend()
+# Plot temperature along central x and y axes
+plt.figure(num=1,figsize=(12,12))
+plt.plot(cc_x,Z[int(Z.shape[0]/2),:],'r',label='Central x-axis temperature profile',linewidth=2)
+plt.plot(cc_x,Z[:,int(Z.shape[1]/2)],'b',label='Central y-axis temperature profile',linewidth=2)
+plt.grid(axis='both')
+plt.xlabel(r'$x, y$ [m]',fontsize=16)
+plt.ylabel(r'$T [K]$',fontsize=16)
+plt.legend(loc='best')
 
-# Plot the FVM solution on the central x and y axes
-# cc_plot = np.zeros(len(cc)+2)   # Add boundary points just for plotting
-# cc_plot[-1] = fc[len(cc)]
-# cc_plot[1:-1] = cc
-# T_plot = np.zeros(len(cc)+2)  # Add boundary points just for plotting
-# T_plot[0] = T_first
-# T_plot[-1] = T_last
-# T_plot[1:-1] = T_fvm.reshape(len(T_fvm))
+# Contour plot
+level_curves=[i for i in range(400,700,20)]
+plt.figure(num=2,figsize=(16,16))
+plt.xlabel(r'$x [m]$')
+plt.ylabel(r'$y [m]$')
+plt.title("Temperature Profile on the refractory brick")
+c = plt.pcolormesh(cc_x, cc_y, Z, cmap='nipy_spectral', vmin=Z.min(), vmax=Z.max(), \
+                   shading='auto')
+CS = plt.contour(cc_x,cc_y,Z,level_curves,colors='white')
+plt.clabel(CS, inline=True, fmt='%1.0f',fontsize=10)
+plt.colorbar(c)
 
-# plt.figure(figsize=(16,16))
-# plt.scatter(cc_plot,T_plot,c="red",marker="o",s=200,label="FVM soluton") # Scatter plot of FVM resluts
-# for c in cc:
-#      plt.axvline(x=c,color='b',linestyle='--',linewidth=0.5)    # Vertical lines from centroid for clarity
-# plt.grid(axis="both")
-# plt.xlim((0.,5.))
-# plt.xlabel(r'$x$',fontsize=16)
-# plt.ylabel(r'$\T$',fontsize=16)
-# plt.legend(loc="best",fontsize=16)
-# plt.title("Comparison between FVM and exact solution for the 1D Diffusion Equation"\
-#           ,fontsize=20) 
