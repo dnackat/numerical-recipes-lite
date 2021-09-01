@@ -23,7 +23,7 @@ h = 10.0   # Constant convective heat transfer coefficient in W/m2-K
 domain_length = 1.0 # In both x and y directions in m
 
 # Create the grid
-numcells = 25   # Number of cells in the x and y directions
+numcells = 11   # Number of cells in the x and y directions
 fc_x = np.linspace(0.,domain_length,numcells+1)  # x face centroids
 fc_y = np.linspace(0.,domain_length,numcells+1)  # y face centroids
 fxx = np.tile(fc_x,numcells+1)       # Long vector of x face centroids
@@ -68,7 +68,7 @@ mixed_bc_coeff = (h*k/del_y_b)/(h + k/del_y_b) # Coeff for bottom face with mixe
 b = np.zeros((len(cxx),1)) # Length = no. of cell centroids
 
 # Populate the vector of constants
-b = S.reshape((len(S),1))     # Source term contribution at every cell centroid
+b = np.copy(S.reshape((len(S),1)))     # Source term contribution at every cell centroid
 
 # Boundary face indices
 left_face_indices = np.array([i for i in range(0,len(b),numcells)])
@@ -197,17 +197,15 @@ y_plot = np.zeros(len(cc_y)+2) # To add boundary points for plotting
 y_plot[1:-1] = cc_y
 y_plot[len(y_plot)-1] = domain_length
 
-T_plot = Z 
-#T_plot = np.hstack()  # To add boundary points for plotting
-
+T_plot_x = np.hstack((500.,Z[int(Z.shape[0]/2),:],500.))
 
 plt.figure(num=1,figsize=(12,12))
-plt.plot(cc_x,Z[int(Z.shape[0]/2),:],'r',label='Central x-axis temperature profile',linewidth=2)
+plt.plot(x_plot,T_plot_x,'r',label='Central x-axis temperature profile',linewidth=2)
 plt.plot(cc_x,Z[:,int(Z.shape[1]/2)],'b',label='Central y-axis temperature profile',linewidth=2)
 plt.grid(axis='both')
 plt.xlabel(r'$x, y$ [m]',fontsize=16)
 plt.ylabel(r'$T [K]$',fontsize=16)
-plt.legend(loc='best')
+plt.legend(loc='best',fontsize=16)
 
 # Contour plot
 level_curves=[i for i in range(400,700,20)]
