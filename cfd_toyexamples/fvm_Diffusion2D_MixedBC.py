@@ -189,6 +189,18 @@ print("T values from FVM method:\n")
 print(Z.round(2))
 
 # Plot temperature along central x and y axes
+x_plot = np.zeros(len(cc_x)+2) # To add boundary points for plotting
+x_plot[1:-1] = cc_x
+x_plot[len(x_plot)-1] = domain_length
+
+y_plot = np.zeros(len(cc_y)+2) # To add boundary points for plotting
+y_plot[1:-1] = cc_y
+y_plot[len(y_plot)-1] = domain_length
+
+T_plot = Z 
+#T_plot = np.hstack()  # To add boundary points for plotting
+
+
 plt.figure(num=1,figsize=(12,12))
 plt.plot(cc_x,Z[int(Z.shape[0]/2),:],'r',label='Central x-axis temperature profile',linewidth=2)
 plt.plot(cc_x,Z[:,int(Z.shape[1]/2)],'b',label='Central y-axis temperature profile',linewidth=2)
@@ -200,12 +212,12 @@ plt.legend(loc='best')
 # Contour plot
 level_curves=[i for i in range(400,700,20)]
 plt.figure(num=2,figsize=(16,16))
-plt.xlabel(r'$x [m]$')
-plt.ylabel(r'$y [m]$')
+plt.xlabel(r'$x [m]$',fontsize=16)
+plt.ylabel(r'$y [m]$',fontsize=16)
 plt.title("Temperature Profile on the refractory brick")
 c = plt.pcolormesh(cc_x, cc_y, Z, cmap='nipy_spectral', vmin=Z.min(), vmax=Z.max(), \
                    shading='auto')
 CS = plt.contour(cc_x,cc_y,Z,level_curves,colors='white')
-plt.clabel(CS, inline=True, fmt='%1.0f',fontsize=10)
+plt.clabel(CS, inline=True, fmt='%1.0f',fontsize=16)
 plt.colorbar(c)
 
