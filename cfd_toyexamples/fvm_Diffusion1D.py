@@ -94,23 +94,22 @@ print(phi_fvm.round(2))
 
 # Plot the FVM and exact solution
 x_cfd = np.arange(0,numcells+dx/2,dx/2)
-phi_cfd = np.zeros(len(x_cfd))
+phi_cfd = np.zeros((len(x_cfd),1))
+phi_cfd[0] = phi_first
+phi_cfd[-1] = phi_last
+phi_cfd[[i for i in range(1,len(phi_cfd),2)]] = phi_fvm
+# Interpolate phi values onto the face centroids
+for i in range(2,len(x_cfd)-1,2):
+     phi_cfd[i] = 0.5*(phi_fvm[int(((i-1)/2))] + phi_fvm[int(np.ceil(i/2))])
 
-cc_plot = np.zeros(len(cc)+2)   # Add boundary points just for plotting
-cc_plot[-1] = fc[len(cc)]
-cc_plot[1:-1] = cc
-phi_plot = np.zeros(len(cc)+2)  # Add boundary points just for plotting
-phi_plot[0] = phi_first
-phi_plot[-1] = phi_last
-phi_plot[1:-1] = phi_fvm.reshape(len(phi_fvm))
 
 plt.figure(figsize=(16,16))
-plt.plot(x_exact,phi_exact,'k',linewidth=1,label="Exact solution") # Plot of the exact solution
-plt.scatter(cc_plot,phi_plot,c="red",marker="o",s=200,label="FVM soluton") # Scatter plot of FVM resluts
-for c in cc:
-     plt.axvline(x=c,color='b',linestyle='--',linewidth=0.5)    # Vertical lines from centroid for clarity
+plt.plot(x_exact,phi_exact,'--',linewidth=1,label="Exact solution") # Plot of the exact solution
+plt.plot(x_cfd,phi_cfd,'b',linewidth=1,label="FVM soluton") # Plot of the FVM solution
+plt.scatter(x_cfd,phi_cfd,c="red",marker="o",s=200) # Scatter plot of FVM resluts
 plt.grid(axis="both")
-plt.xlim((0.,5.))
+plt.xlim((0.,numcells))
+plt.ylim((np.min(phi_cfd),np.max(phi_cfd)))
 plt.xlabel(r'$x$',fontsize=16)
 plt.ylabel(r'$\phi$',fontsize=16)
 plt.legend(loc="best",fontsize=16)
