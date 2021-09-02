@@ -23,7 +23,7 @@ h = 10.0   # Constant convective heat transfer coefficient in W/m2-K
 domain_length = 1.0 # In both x and y directions in m
 
 # Create the grid
-numcells = 11   # Number of cells in the x and y directions
+numcells = 5   # Number of cells in the x and y directions
 fc_x = np.linspace(0.,domain_length,numcells+1)  # x face centroids
 fc_y = np.linspace(0.,domain_length,numcells+1)  # y face centroids
 fxx = np.tile(fc_x,numcells+1)       # Long vector of x face centroids
