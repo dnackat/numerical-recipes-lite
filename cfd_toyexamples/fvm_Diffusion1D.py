@@ -82,8 +82,8 @@ def gauss(A, b, x, n):
 phi_fvm = gauss(A, b, phi, 100)
 
 # Analytical (exact) solution
-x = np.linspace(0.,5.,100)
-phi_exact = 10 + 50*x - x**3
+x_exact = np.linspace(0.,5.,100)
+phi_exact = 10 + 50*x_exact - x_exact**3
 
 # Print the result
 print("\n")
@@ -93,6 +93,9 @@ print("PHI values from FVM method:\n")
 print(phi_fvm.round(2))
 
 # Plot the FVM and exact solution
+x_cfd = np.arange(0,numcells+dx/2,dx/2)
+phi_cfd = np.zeros(len(x_cfd))
+
 cc_plot = np.zeros(len(cc)+2)   # Add boundary points just for plotting
 cc_plot[-1] = fc[len(cc)]
 cc_plot[1:-1] = cc
@@ -102,7 +105,7 @@ phi_plot[-1] = phi_last
 phi_plot[1:-1] = phi_fvm.reshape(len(phi_fvm))
 
 plt.figure(figsize=(16,16))
-plt.plot(x,phi_exact,'k',linewidth=1,label="Exact solution") # Plot of the exact solution
+plt.plot(x_exact,phi_exact,'k',linewidth=1,label="Exact solution") # Plot of the exact solution
 plt.scatter(cc_plot,phi_plot,c="red",marker="o",s=200,label="FVM soluton") # Scatter plot of FVM resluts
 for c in cc:
      plt.axvline(x=c,color='b',linestyle='--',linewidth=0.5)    # Vertical lines from centroid for clarity
