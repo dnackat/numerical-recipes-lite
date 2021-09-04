@@ -200,8 +200,9 @@ y_plot[len(y_plot)-1] = domain_length
 T_plot_x = np.hstack((500.,Z[int(Z.shape[0]/2),:],500.))
 
 plt.figure(num=1,figsize=(12,12))
-plt.plot(x_plot,T_plot_x,'r',label='Central x-axis temperature profile',linewidth=2)
-plt.plot(cc_x,Z[:,int(Z.shape[1]/2)],'b',label='Central y-axis temperature profile',linewidth=2)
+plt.title(r'Temperature profile across the refractory brick',fontsize=16)
+plt.plot(x_plot,T_plot_x,'r',label='Central x-axis',linewidth=2)
+plt.plot(cc_x,Z[:,int(Z.shape[1]/2)],'b',label='Central y-axis',linewidth=2)
 plt.grid(axis='both')
 plt.xlabel(r'$x, y$ [m]',fontsize=16)
 plt.ylabel(r'$T [K]$',fontsize=16)
@@ -218,4 +219,3 @@ c = plt.pcolormesh(cc_x, cc_y, Z, cmap='nipy_spectral', vmin=Z.min(), vmax=Z.max
 CS = plt.contour(cc_x,cc_y,Z,level_curves,colors='white')
 plt.clabel(CS, inline=True, fmt='%1.0f',fontsize=16)
 plt.colorbar(c)
-
