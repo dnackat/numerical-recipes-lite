@@ -33,7 +33,7 @@ V4 = ((1 - H1_by_H**2) + (1/visc_ratio4)*(H1_by_H**2 - y_by_H**2))
 plt.figure(figsize=(16,16))
 plt.rcParams.update({
     "text.usetex": True,
-    "font.family": "sans-serif",
+    "font.family": "serif",
     "font.sans-serif": ["Helvetica"]})
 plt.plot(V0,y_by_H,'blue',label=r'$\frac{\mu_{o}}{\mu_{w}} = 1$',linewidth=2)
 plt.plot(V1,y_by_H,'green',label=r'$\frac{\mu_{o}}{\mu_{w}} = 2$',linewidth=2)
