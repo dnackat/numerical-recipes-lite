@@ -13,20 +13,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-xx, yy = np.meshgrid(np.linspace(-4,4,100),np.linspace(-4,4,100))
-zz = np.sqrt(xx**2 + yy**2 - 4.)
+x = np.linspace(-4,4,100)
+y = np.linspace(-4,4,100) 
+xx, yy = np.meshgrid(x,y)
+zz1 = np.sqrt(xx**2 + yy**2)
+zz2 = -np.sqrt(xx**2 + yy**2)
 
-# Plot surface
+# Plot surface                                             
 fig = plt.figure(figsize=(16,16))
-plt.rcParams.update({
+plt.rcParams.update({                                                                             
     "text.usetex": True,
     "font.family": "serif",
     "font.sans-serif": ["Helvetica"]})
 ax = Axes3D(fig)
-ax.plot_surface(xx, yy, zz, cmap='winter', alpha=0.2)
+#ax.contourf(xx,yy,zz)
+ax.plot_surface(xx, yy, zz1, cmap='winter', alpha=0.8)
+ax.plot_surface(xx, yy, zz2, cmap='winter', alpha=0.8)
 ax.view_init(elev=10, azim=60)
-ax.set_xlabel(r'$x$', fontsize=12)
-ax.set_ylabel(r'$y$', fontsize=12)
+ax.set_xlabel(r'$x$', fontsize=18)
+ax.set_ylabel(r'$y$', fontsize=18)
 #ax.zaxis.set_rotate_label(False) 
-ax.set_zlabel(r'$\Phi_3 = x_2^2$', fontsize=12)
+ax.set_zlabel(r'$z$', fontsize=18)
 ax.set_title("3D Plot of "+r'$x^2+y^2-z^2=4$', fontsize=20)
