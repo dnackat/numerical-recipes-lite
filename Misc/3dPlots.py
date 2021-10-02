@@ -13,11 +13,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-x = np.linspace(-4,4,100)
-y = np.linspace(-4,4,100) 
-xx, yy = np.meshgrid(x,y)
-zz1 = np.sqrt(xx**2 + yy**2)
-zz2 = -np.sqrt(xx**2 + yy**2)
+x = np.linspace(-2,2,100)
+y1 = np.sqrt(4 - x**2)
+y2 = -np.sqrt(4 - x**2)
+xx, yy1 = np.meshgrid(x,y1)
+xx, yy2 = np.meshgrid(x,y2)
+zz1 = np.sqrt(xx**2 + yy1**2 - 4)
+zz2 = -np.sqrt(xx**2 + yy2**2 - 4)
 
 # Plot surface                                             
 fig = plt.figure(figsize=(16,16))
@@ -27,8 +29,8 @@ plt.rcParams.update({
     "font.sans-serif": ["Helvetica"]})
 ax = Axes3D(fig)
 #ax.contourf(xx,yy,zz)
-ax.plot_surface(xx, yy, zz1, cmap='winter', alpha=0.8)
-ax.plot_surface(xx, yy, zz2, cmap='winter', alpha=0.8)
+ax.plot_surface(xx, yy1, zz1, cmap='winter', alpha=0.8)
+ax.plot_surface(xx, yy2, zz2, cmap='winter', alpha=0.8)
 ax.view_init(elev=10, azim=60)
 ax.set_xlabel(r'$x$', fontsize=18)
 ax.set_ylabel(r'$y$', fontsize=18)
