@@ -5,21 +5,25 @@ Created on Sat Oct  2 20:05:19 2021
 
 @author: dileepn
 
-3D plots
+3D plots: x^2 + y^2 - z^2 = 4
 """
 
 # Preliminaries
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+#from mpl_toolkits.mplot3d import Axes3D
 
-x = np.linspace(-2,2,100)
-y1 = np.sqrt(4 - x**2)
-y2 = -np.sqrt(4 - x**2)
-xx, yy1 = np.meshgrid(x,y1)
-xx, yy2 = np.meshgrid(x,y2)
-zz1 = np.sqrt(xx**2 + yy1**2 - 4)
-zz2 = -np.sqrt(xx**2 + yy2**2 - 4)
+u = np.linspace(-2,2,200)
+v = np.linspace(0,2*np.pi,200)
+uu, vv = np.meshgrid(u,v) 
+
+a = 1
+b = 1
+c = 1
+
+x = a*np.cosh(uu)*np.cos(vv)
+y = b*np.cosh(uu)*np.sin(vv)
+z = c*np.sinh(uu)
 
 # Plot surface                                             
 fig = plt.figure(figsize=(16,16))
@@ -27,10 +31,10 @@ plt.rcParams.update({
     "text.usetex": True,
     "font.family": "serif",
     "font.sans-serif": ["Helvetica"]})
-ax = Axes3D(fig)
-#ax.contourf(xx,yy,zz)
-ax.plot_surface(xx, yy1, zz1, cmap='winter', alpha=0.8)
-ax.plot_surface(xx, yy2, zz2, cmap='winter', alpha=0.8)
+
+ax = fig.add_subplot(111, projection='3d')
+#ax = Axes3D(fig)
+ax.plot_surface(x, y, z, cmap='winter', alpha=0.8)
 ax.view_init(elev=10, azim=60)
 ax.set_xlabel(r'$x$', fontsize=18)
 ax.set_ylabel(r'$y$', fontsize=18)
