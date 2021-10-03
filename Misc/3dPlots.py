@@ -13,6 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 #from mpl_toolkits.mplot3d import Axes3D
 
+#%% Hyperboloid
 u = np.linspace(-2,2,200)
 v = np.linspace(0,2*np.pi,200)
 uu, vv = np.meshgrid(u,v) 
@@ -41,3 +42,27 @@ ax.set_ylabel(r'$y$', fontsize=18)
 #ax.zaxis.set_rotate_label(False) 
 ax.set_zlabel(r'$z$', fontsize=18)
 ax.set_title("3D Plot of "+r'$x^2+y^2-z^2=4$', fontsize=20)
+
+#%% Helix
+t = np.linspace(0,30,200)
+
+x = np.cos(t)
+y = np.sin(t)
+z = t
+
+fig = plt.figure(figsize=(16,16))
+plt.rcParams.update({                                                                             
+    "text.usetex": True,
+    "font.family": "serif",
+    "font.sans-serif": ["Helvetica"]})
+
+ax = fig.add_subplot(111, projection='3d')
+#ax = Axes3D(fig)
+ax.plot(x, y, z,'red',linewidth=2)
+ax.view_init(elev=30, azim=60)
+ax.set_xlabel(r'$x$', fontsize=18)
+ax.set_ylabel(r'$y$', fontsize=18)
+#ax.zaxis.set_rotate_label(False) 
+ax.set_zlabel(r'$z$', fontsize=18)
+ax.set_title("3D Plot of a helix", fontsize=20)
+
