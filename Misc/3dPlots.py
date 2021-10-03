@@ -17,9 +17,9 @@ u = np.linspace(-2,2,200)
 v = np.linspace(0,2*np.pi,200)
 uu, vv = np.meshgrid(u,v) 
 
-a = 1
-b = 1
-c = 1
+a = 2
+b = 2
+c = 2
 
 x = a*np.cosh(uu)*np.cos(vv)
 y = b*np.cosh(uu)*np.sin(vv)
