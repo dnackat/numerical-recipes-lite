@@ -44,9 +44,9 @@ area_x = delta_y*thickness # Areas of faces with normal vector aligned with the 
 area_y = delta_x*thickness # Areas of faces with normal vector aligned with the y-axis
 cell_volume = delta_x*delta_y*thickness
 
-# Velocity field
-u = 1 + fxx**2
-v = 1 + fyy**2
+# Velocity field at face centroids
+u = 1. + fxx**2
+v = 1. + fyy**2
 
 # Volumetric source. Depends on cell centroid values
 S = 0.5*4*(cxx + cyy)*cell_volume
@@ -95,56 +95,56 @@ for i in range(len(b)): # Fill from bottom to top
           if i in bottom_face_indices: 
                if i == 0: # Bottom left cell
                     A[i,i+1] = -max(-F_i*u[i+1],0.) - k*area_x/del_x # East cell
-                    A[i,i+numcells] = -max(-F_j*v[i+numcells],0.) - k*area_y/del_y # North cell
+                    A[i,i+numcells] = -max(-F_j*v[i+numcells+1],0.) - k*area_y/del_y # North cell
                     A[i,i] = abs(A[i,i+1]) + abs(A[i,i+numcells]) \
-                         + k*area_x/del_x_b
+                         + k*area_x/del_x_b 
                elif i == numcells-1: # Bottom right cell
-                    A[i,i-1] = -max(F_i*u[i-1],0.) - k*area_x/del_x # West cell
-                    A[i,i+numcells] = -max(-F_j*v[i+numcells],0.) - k*area_y/del_y # North cell
+                    A[i,i-1] = -max(F_i*u[i],0.) - k*area_x/del_x # West cell
+                    A[i,i+numcells] = -max(-F_j*v[i+numcells+1],0.) - k*area_y/del_y # North cell
                     A[i,i] = abs(A[i,i-1]) + abs(A[i,i+numcells]) \
                          + k*area_x/del_x_b
                else: # Remaining bottom cells
                     A[i,i+1] = -max(-F_i*u[i+1],0.) - k*area_x/del_x # East cell
-                    A[i,i-1] = -max(F_i*u[i-1],0.) - k*area_x/del_x # West cell
-                    A[i,i+numcells] = -max(-F_j*v[i+numcells],0.) - k*area_y/del_y # North cell
+                    A[i,i-1] = -max(F_i*u[i],0.) - k*area_x/del_x # West cell
+                    A[i,i+numcells] = -max(-F_j*v[i+numcells+1],0.) - k*area_y/del_y # North cell
                     A[i,i] = abs(A[i,i+1]) + abs(A[i,i-1]) + abs(A[i,i+numcells])
-          # phiop boundary cells including corners
+          # Top boundary cells including corners
           elif i in top_face_indices: 
                if i == len(b)-numcells: # Top left cell
-                    A[i,i+1] = -max(-F_i*u[i+1],0.) - k*area_x/del_x # East cell
-                    A[i,i-numcells] = -max(F_j*v[i-numcells],0.) -k*area_y/del_y # South cell
+                    A[i,i+1] = -max(-F_i*u[i+numcells],0.) - k*area_x/del_x # East cell
+                    A[i,i-numcells] = -max(F_j*v[i+numcells-1],0.) -k*area_y/del_y # South cell
                     A[i,i] = abs(A[i,i+1]) + abs(A[i,i-numcells]) + k*area_y/del_y_b \
                          + k*area_x/del_x_b
                if i == len(b)-1: # Top right cell
-                    A[i,i-1] = -max(F_i*u[i-1],0.) - k*area_x/del_x # West cell
-                    A[i,i-numcells] = -max(F_j*v[i-numcells],0.) - k*area_y/del_y # South cell
+                    A[i,i-1] = -max(F_i*u[i+numcells-1],0.) - k*area_x/del_x # West cell
+                    A[i,i-numcells] = -max(F_j*v[i+numcells-1],0.) - k*area_y/del_y # South cell
                     A[i,i] = abs(A[i,i-1]) + abs(A[i,i-numcells]) + k*area_y/del_y_b \
                          + k*area_x/del_x_b
                else: # Remaining top faces
-                    A[i,i+1] = -max(-F_i*u[i+1],0.) - k*area_x/del_x # East cell
-                    A[i,i-1] = -max(F_i*u[i-1],0.) - k*area_x/del_x # West cell
-                    A[i,i-numcells] = -max(F_j*v[i-numcells],0.) - k*area_y/del_y # South cell
+                    A[i,i+1] = -max(-F_i*u[i+numcells],0.) - k*area_x/del_x # East cell
+                    A[i,i-1] = -max(F_i*u[i+numcells-1],0.) - k*area_x/del_x # West cell
+                    A[i,i-numcells] = -max(F_j*v[i+numcells-1],0.) - k*area_y/del_y # South cell
                     A[i,i] = abs(A[i,i-1]) + abs(A[i,i+1]) + abs(A[i,i-numcells]) \
                          + k*area_x/del_x_b
           # Right boundary cells excluding corners
           elif i in right_face_indices:
                if i != numcells-1 and i != len(b)-1:
-                    A[i,i-1] = -max(F_i*u[i-1],0.) - k*area_x/del_x # West cell
-                    A[i,i+numcells] = -max(-F_j*v[i+numcells],0.) - k*area_y/del_y # North cell
-                    A[i,i-numcells] = -max(F_j*v[i-numcells],0.) - k*area_y/del_y # South cell
+                    A[i,i-1] = -max(F_i*u[i+numcells-1],0.) - k*area_x/del_x # West cell
+                    A[i,i+numcells] = -max(-F_j*v[i+numcells+1],0.) - k*area_y/del_y # North cell
+                    A[i,i-numcells] = -max(F_j*v[i+numcells-1],0.) - k*area_y/del_y # South cell
                     A[i,i] = abs(A[i,i-1]) + abs(A[i,i+numcells]) + abs(A[i,i-numcells]) \
                          + k*area_x/del_x_b
           # Left boundary cells excluding corners
           elif i in left_face_indices: 
                if i != 0 and i != len(b)-numcells: 
                     A[i,i+1] = -max(-F_i*u[i+1],0.) - k*area_x/del_x # East cell
-                    A[i,i+numcells] = -max(-F_j*v[i+numcells],0.) - k*area_y/del_y # North cell
-                    A[i,i-numcells] = -max(F_j*v[i-numcells],0.) - k*area_y/del_y # South cell
+                    A[i,i+numcells] = -max(-F_j*v[i+numcells+1],0.) - k*area_y/del_y # North cell
+                    A[i,i-numcells] = -max(F_j*v[i+numcells-1],0.) - k*area_y/del_y # South cell
                     A[i,i] = abs(A[i,i+1]) + abs(A[i,i+numcells]) + abs(A[i,i-numcells]) \
                          + k*area_x/del_x_b
           # Interior cells
           else: 
-                    A[i,i-1] = -max(F_i*u[i-1],0.) - k*area_x/del_x # West cell
+                    A[i,i-1] = -max(F_i*u[i],0.) - k*area_x/del_x # West cell
                     A[i,i+1] = -max(-F_i*u[i+1],0.) - k*area_x/del_x # East cell
                     A[i,i+numcells] = -max(-F_j*v[i+numcells],0.) - k*area_y/del_y # North cell
                     A[i,i-numcells] = -max(F_j*v[i-numcells],0.) - k*area_y/del_y # South cell
