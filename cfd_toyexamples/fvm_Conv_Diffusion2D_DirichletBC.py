@@ -150,7 +150,7 @@ for i in range(len(b)): # Fill from bottom to top
                     A[i,i-numcells] = -max(F_j[i+numcells-1],0.) - k*area_y/del_y # South cell
                     A[i,i] = abs(A[i,i+1]) + abs(A[i,i+numcells]) + abs(A[i,i-numcells]) \
                          + k*area_x/del_x_b + \
-                         (F_i[i+2] - F_i[i+1] + F_j[i+numcells+2] - F_j[i+1])
+                         (F_i[i+2] + F_j[i+numcells+2] - F_j[i+1])
           # Interior cells
           else: 
                     A[i,i-1] = -max(F_i[i+1],0.) - k*area_x/del_x # West cell
@@ -163,7 +163,7 @@ for i in range(len(b)): # Fill from bottom to top
 
 
 ######## Gauss-Seidel iterative method ########
-def gauss(A, b, x, n):
+def gauss(A, b, x, itr=1000, tol=1.e-6):
      """ phihis is a function that uses the Gauss-Seidel iterative scheme from 
          numerical linear algebra to solve a linear system of the form 
          Ax = b. phihe scheme updates x using the following algorithm:
@@ -172,10 +172,10 @@ def gauss(A, b, x, n):
 
      L = np.tril(A)
      U = A - L
-     for i in range(n):
+     for i in range(itr):
         xprev = x
         x = np.dot(np.linalg.inv(L), b - np.dot(U, x))
-        if np.linalg.norm(x - xprev) < 1.e-6:
+        if np.linalg.norm(x - xprev) < tol:
             print("\n")
             print("Converged in",i+1,"iterations.")
             break
