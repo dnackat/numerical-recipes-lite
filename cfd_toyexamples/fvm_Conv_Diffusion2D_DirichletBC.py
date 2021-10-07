@@ -6,9 +6,12 @@ Created on Wed Oct  6 22:25:40 2021
 @author: dileepn
 
 Solution 2D Convection-Diffusion equation with Dirichlet boundary conditions 
-using FVM on a uniform, Cartesian mesh.
+using FVM on a uniform, Cartesian mesh. 
 
 Governing PDE: div(Gamma*grad(phi)) - div(rho*vel_vector*phi) + Sources = 0
+
+Assumptions: 1. Linear profile for the gradient
+             2. First-order Upwind Difference Scheme (UDS) for the convection term  
 """
 # Preliminaries
 import numpy as np
@@ -16,13 +19,13 @@ import numpy as np
 
 
 # Parameters
-k = 0. #3000.  # Constant thermal conductivity in W/m-K
+k = 3.  # Constant thermal conductivity in W/m-K
 rho = 2.0  # Density of the fluid in kg/m3
 h = 0.0   # Constant convective heat transfer coefficient in W/m2-K
 domain_length = 3.0 # In both x and y directions in m
 
 # Create the grid
-numcells = 50   # Number of cells in the x and y directions
+numcells = 3   # Number of cells in the x and y directions
 numfaces = numcells + 1 # Number of faces in the x and y directions
 fc_x = np.linspace(0.,domain_length,numcells+1)  # x face centroids
 fc_y = np.linspace(0.,domain_length,numcells+1)  # y face centroids
@@ -67,7 +70,7 @@ phi = np.ones((len(cxx),1)) # Length should be equal to no. of cell centroids;
 phi_right = 0.    # phi on right boundary face
 phi_left = 0.     # phi on left boundary face
 phi_top = 0.      # phi on top boundary face
-phi_bottom = 1.      # phi of flow across bottom face
+phi_bottom = 1.   # phi of flow across bottom face
 
 # Vector of constants
 b = np.zeros((len(cxx),1)) # Length = no. of cell centroids
@@ -93,8 +96,10 @@ A = np.zeros((len(b),len(b))) # Each row corresonds to a cell centroid
 
 ##### Function to determine face indices based on cell centroids #####
 def faceid(a, name="west"):
+     
      # What row am I on?
      rowid = int(np.floor(a/numcells))
+     
      # What column am I on?
      colid = int(np.mod(a, numcells))
 
@@ -122,25 +127,26 @@ for i in range(len(b)): # Fill from bottom to top
                     A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
                     A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
                     A[i,i] = abs(A[i,i+1]) + abs(A[i,i+numcells]) \
-                         + k*area_x/del_x_b + \
+                         + k*area_x/del_x_b + k*area_y/del_y_b + \
                          (F_i[faceid(i,"east")] + F_j[faceid(i,"north")])  
                elif i == numcells-1: # Bottom right cell
                     A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
                     A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
                     A[i,i] = abs(A[i,i-1]) + abs(A[i,i+numcells]) \
-                         + k*area_x/del_x_b + \
+                         + k*area_x/del_x_b + k*area_y/del_y_b + \
                          (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")])
                else: # Remaining bottom cells
                     A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
                     A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
                     A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
-                    A[i,i] = abs(A[i,i+1]) + abs(A[i,i-1]) + abs(A[i,i+numcells]) + \
+                    A[i,i] = abs(A[i,i+1]) + abs(A[i,i-1]) + abs(A[i,i+numcells]) \
+                         + k*area_y/del_y_b + \
                     (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")])
           # Top boundary cells including corners
           elif i in top_face_indices: 
                if i == len(b)-numcells: # Top left cell
                     A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
-                    A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) -k*area_y/del_y # South cell
+                    A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) - k*area_y/del_y # South cell
                     A[i,i] = abs(A[i,i+1]) + abs(A[i,i-numcells]) + k*area_y/del_y_b \
                          + k*area_x/del_x_b + \
                          (F_i[faceid(i,"east")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])
@@ -155,7 +161,7 @@ for i in range(len(b)): # Fill from bottom to top
                     A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
                     A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) - k*area_y/del_y # South cell
                     A[i,i] = abs(A[i,i-1]) + abs(A[i,i+1]) + abs(A[i,i-numcells]) \
-                         + k*area_x/del_x_b + \
+                         + k*area_y/del_y_b + \
                          (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])
           # Right boundary cells excluding corners
           elif i in right_face_indices:
