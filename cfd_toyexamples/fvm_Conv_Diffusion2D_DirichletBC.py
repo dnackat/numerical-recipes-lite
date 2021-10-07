@@ -90,7 +90,6 @@ b[right_face_indices] += k*area_x*phi_right/del_x_b # Dirichlet boundary on righ
 # Matrix of coefficients (size = size(b)*size(phi))
 A = np.zeros((len(b),len(b))) # Each row corresonds to a cell centroid
 
-#%%
 # Populate A. It is sparse and diagonally dominant, so a single loop should suffice.
 for i in range(len(b)): # Fill from bottom to top
           # Bottom boundary cells including corners
@@ -184,19 +183,21 @@ def gauss(A, b, x, n):
 
 ################################################
 
-#Solve the system 
+# Solve the system 
 phi_fvm = gauss(A, b, phi, 1000)
-Z = phi_fvm.reshape((numcells,numcells))
+
+# Invert phi so that it corresponds with the given geometry
+Z = np.flip(phi_fvm.reshape((numcells,numcells)),axis=0)
 
 # Print the result
 print("\n")
-print("Vector of constants is:\n")
-print(b.reshape((numcells,numcells)))
+print("Vector of constants, b is:\n")
+print(b)
 print("\n")
-print("Coefficient matrix is:\n")
-print(A)
+print("Coefficient matrix (flipped to match the cell indexing), A is:\n")
+print(np.flip(A, axis=0))
 print("\n")
-print("---------- Solution ----------")
+print("------------ Solution of the linear system A*phi = b ------------")
 print("\n")
 print("phi values from FVM method:\n")
 print(Z.round(2))
