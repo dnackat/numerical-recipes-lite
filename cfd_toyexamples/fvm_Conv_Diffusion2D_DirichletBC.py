@@ -6,7 +6,9 @@ Created on Wed Oct  6 22:25:40 2021
 @author: dileepn
 
 Solution 2D Convection-Diffusion equation with Dirichlet boundary conditions 
-using FVM
+using FVM on a uniform, Cartesian mesh.
+
+Governing PDE: div(Gamma*grad(phi)) - div(rho*vel_vector*phi) + Sources = 0
 """
 # Preliminaries
 import numpy as np
@@ -52,8 +54,8 @@ v = 1. + fyy**2
 S = 0.5*4*(cxx + cyy)*cell_volume
 
 # Fluxes
-F_i = rho*area_x
-F_j = rho*area_y
+F_i = rho*area_x*u
+F_j = rho*area_y*v
 
 # Vector of unknown temperatures
 phi = np.ones((len(cxx),1)) # Length should be equal to no. of cell centroids; 
@@ -61,9 +63,9 @@ phi = np.ones((len(cxx),1)) # Length should be equal to no. of cell centroids;
 
                               
 # Boundary conditions for phi (included with constants in b vector)
-#phi_right = 500.    # phi on right boundary face
+phi_right = 0.    # phi on right boundary face
 phi_left = 0.     # phi on left boundary face
-#phi_top = 500.      # phi on top boundary face
+phi_top = 0.      # phi on top boundary face
 phi_bottom = 1.      # phi of flow across bottom face
 
 # Vector of constants
@@ -79,10 +81,10 @@ top_face_indices = np.array([i for i in range(len(b)-numcells,len(b))])
 bottom_face_indices = np.array([i for i in range(0,numcells)])
 
 # Contributions to b from boundaries 
-b[bottom_face_indices] += (F_j*v[np.repeat(0,numcells)]*phi_bottom).reshape((len(bottom_face_indices),1)) # Dirichlet BC contribution on bottom face
-b[top_face_indices] += 0. # Dirichlet boundary on top face
-b[left_face_indices] += (F_i*u[np.repeat(0,numcells)]*phi_left).reshape((len(left_face_indices),1)) # Dirichlet boundary on left faces
-b[right_face_indices] += 0. # Dirichlet boundary on right faces
+b[bottom_face_indices] += F_j[0]*phi_bottom # Dirichlet BC contribution on bottom face
+b[top_face_indices] += k*area_y*phi_top/del_y_b # Dirichlet boundary on top face
+b[left_face_indices] += F_i[0]*phi_left + k*area_x*phi_left/del_x_b # Dirichlet boundary on left faces
+b[right_face_indices] += k*area_x*phi_right/del_x_b # Dirichlet boundary on right faces
   
 
 # Matrix of coefficients (size = size(b)*size(phi))
@@ -94,71 +96,71 @@ for i in range(len(b)): # Fill from bottom to top
           # Bottom boundary cells including corners
           if i in bottom_face_indices: 
                if i == 0: # Bottom left cell
-                    A[i,i+1] = -max(-F_i*u[i+1],0.) - k*area_x/del_x # East cell
-                    A[i,i+numcells] = -max(-F_j*v[i+numcells+1],0.) - k*area_y/del_y # North cell
+                    A[i,i+1] = -max(-F_i[i+1],0.) - k*area_x/del_x # East cell
+                    A[i,i+numcells] = -max(-F_j[i+numcells+1],0.) - k*area_y/del_y # North cell
                     A[i,i] = abs(A[i,i+1]) + abs(A[i,i+numcells]) \
                          + k*area_x/del_x_b + \
-                         (F_i*u[i+1] - F_i*u[i] + F_j*v[i+numcells+1] - F_j*v[i])  
+                         (F_i[i+1] + F_j[i+numcells+1])  
                elif i == numcells-1: # Bottom right cell
-                    A[i,i-1] = -max(F_i*u[i],0.) - k*area_x/del_x # West cell
-                    A[i,i+numcells] = -max(-F_j*v[i+numcells+1],0.) - k*area_y/del_y # North cell
+                    A[i,i-1] = -max(F_i[i],0.) - k*area_x/del_x # West cell
+                    A[i,i+numcells] = -max(-F_j[i+numcells+1],0.) - k*area_y/del_y # North cell
                     A[i,i] = abs(A[i,i-1]) + abs(A[i,i+numcells]) \
                          + k*area_x/del_x_b + \
-                         (F_i*u[i+1] - F_i*u[i] + F_j*v[i+numcells+1] - F_j*v[i])
+                         (F_i[i+1] - F_i[i] + F_j[i+numcells+1])
                else: # Remaining bottom cells
-                    A[i,i+1] = -max(-F_i*u[i+1],0.) - k*area_x/del_x # East cell
-                    A[i,i-1] = -max(F_i*u[i],0.) - k*area_x/del_x # West cell
-                    A[i,i+numcells] = -max(-F_j*v[i+numcells+1],0.) - k*area_y/del_y # North cell
+                    A[i,i+1] = -max(-F_i[i+1],0.) - k*area_x/del_x # East cell
+                    A[i,i-1] = -max(F_i[i],0.) - k*area_x/del_x # West cell
+                    A[i,i+numcells] = -max(-F_j[i+numcells+1],0.) - k*area_y/del_y # North cell
                     A[i,i] = abs(A[i,i+1]) + abs(A[i,i-1]) + abs(A[i,i+numcells]) + \
-                    (F_i*u[i+1] - F_i*u[i] + F_j*v[i+numcells+1] - F_j*v[i])
+                    (F_i[i+1] - F_i[i] + F_j[i+numcells+1])
           # Top boundary cells including corners
           elif i in top_face_indices: 
                if i == len(b)-numcells: # Top left cell
-                    A[i,i+1] = -max(-F_i*u[i+numcells],0.) - k*area_x/del_x # East cell
-                    A[i,i-numcells] = -max(F_j*v[i+numcells-1],0.) -k*area_y/del_y # South cell
+                    A[i,i+1] = -max(-F_i[i+numcells],0.) - k*area_x/del_x # East cell
+                    A[i,i-numcells] = -max(F_j[i+numcells-1],0.) -k*area_y/del_y # South cell
                     A[i,i] = abs(A[i,i+1]) + abs(A[i,i-numcells]) + k*area_y/del_y_b \
                          + k*area_x/del_x_b + \
-                         (F_i*u[i+numcells-1] - F_i*u[i+numcells-2] + F_j*v[i+numcells+2] - F_j*v[i+2])
+                         (F_i[i+numcells-1] + F_j[i+numcells+2] - F_j[i+2])
                if i == len(b)-1: # Top right cell
-                    A[i,i-1] = -max(F_i*u[i+numcells-1],0.) - k*area_x/del_x # West cell
-                    A[i,i-numcells] = -max(F_j*v[i+numcells-1],0.) - k*area_y/del_y # South cell
+                    A[i,i-1] = -max(F_i[i+numcells-1],0.) - k*area_x/del_x # West cell
+                    A[i,i-numcells] = -max(F_j[i+numcells-1],0.) - k*area_y/del_y # South cell
                     A[i,i] = abs(A[i,i-1]) + abs(A[i,i-numcells]) + k*area_y/del_y_b \
                          + k*area_x/del_x_b + \
-                         (F_i*u[i+numcells] - F_i*u[i+numcells-1] + F_j*v[i+numcells+3] - F_j*v[i+2])
+                         (F_i[i+numcells] - F_i[i+numcells-1] + F_j[i+numcells+3] - F_j[i+2])
                else: # Remaining top faces
-                    A[i,i+1] = -max(-F_i*u[i+numcells],0.) - k*area_x/del_x # East cell
-                    A[i,i-1] = -max(F_i*u[i+numcells-1],0.) - k*area_x/del_x # West cell
-                    A[i,i-numcells] = -max(F_j*v[i+numcells-1],0.) - k*area_y/del_y # South cell
+                    A[i,i+1] = -max(-F_i[i+numcells],0.) - k*area_x/del_x # East cell
+                    A[i,i-1] = -max(F_i[i+numcells-1],0.) - k*area_x/del_x # West cell
+                    A[i,i-numcells] = -max(F_j[i+numcells-1],0.) - k*area_y/del_y # South cell
                     A[i,i] = abs(A[i,i-1]) + abs(A[i,i+1]) + abs(A[i,i-numcells]) \
                          + k*area_x/del_x_b + \
-                         (F_i*u[i+numcells] - F_i*u[i+numcells-1] + F_j*v[i+numcells+3] - F_j*v[i+2])
+                         (F_i[i+numcells] - F_i[i+numcells-1] + F_j[i+numcells+3] - F_j[i+2])
           # Right boundary cells excluding corners
           elif i in right_face_indices:
                if i != numcells-1 and i != len(b)-1:
-                    A[i,i-1] = -max(F_i*u[i+1],0.) - k*area_x/del_x # West cell
-                    A[i,i+numcells] = -max(-F_j*v[i+numcells+2],0.) - k*area_y/del_y # North cell
-                    A[i,i-numcells] = -max(F_j*v[i+numcells-1],0.) - k*area_y/del_y # South cell
+                    A[i,i-1] = -max(F_i[i+1],0.) - k*area_x/del_x # West cell
+                    A[i,i+numcells] = -max(-F_j[i+numcells+2],0.) - k*area_y/del_y # North cell
+                    A[i,i-numcells] = -max(F_j[i+numcells-1],0.) - k*area_y/del_y # South cell
                     A[i,i] = abs(A[i,i-1]) + abs(A[i,i+numcells]) + abs(A[i,i-numcells]) \
                          + k*area_x/del_x_b + \
-                         (F_i*u[i+2] - F_i*u[i+1] + F_j*v[i+numcells+2] - F_j*v[i+1])
+                         (F_i[i+2] - F_i[i+1] + F_j[i+numcells+2] - F_j[i+1])
           # Left boundary cells excluding corners
           elif i in left_face_indices: 
                if i != 0 and i != len(b)-numcells: 
-                    A[i,i+1] = -max(-F_i*u[i+2],0.) - k*area_x/del_x # East cell
-                    A[i,i+numcells] = -max(-F_j*v[i+numcells+2],0.) - k*area_y/del_y # North cell
-                    A[i,i-numcells] = -max(F_j*v[i+numcells-1],0.) - k*area_y/del_y # South cell
+                    A[i,i+1] = -max(-F_i[i+2],0.) - k*area_x/del_x # East cell
+                    A[i,i+numcells] = -max(-F_j[i+numcells+2],0.) - k*area_y/del_y # North cell
+                    A[i,i-numcells] = -max(F_j[i+numcells-1],0.) - k*area_y/del_y # South cell
                     A[i,i] = abs(A[i,i+1]) + abs(A[i,i+numcells]) + abs(A[i,i-numcells]) \
                          + k*area_x/del_x_b + \
-                         (F_i*u[i+2] - F_i*u[i+1] + F_j*v[i+numcells+2] - F_j*v[i+1])
+                         (F_i[i+2] - F_i[i+1] + F_j[i+numcells+2] - F_j[i+1])
           # Interior cells
           else: 
-                    A[i,i-1] = -max(F_i*u[i+1],0.) - k*area_x/del_x # West cell
-                    A[i,i+1] = -max(-F_i*u[i+2],0.) - k*area_x/del_x # East cell
-                    A[i,i+numcells] = -max(-F_j*v[i+numcells+2],0.) - k*area_y/del_y # North cell
-                    A[i,i-numcells] = -max(F_j*v[i+numcells-1],0.) - k*area_y/del_y # South cell
+                    A[i,i-1] = -max(F_i[i+1],0.) - k*area_x/del_x # West cell
+                    A[i,i+1] = -max(-F_i[i+2],0.) - k*area_x/del_x # East cell
+                    A[i,i+numcells] = -max(-F_j[i+numcells+2],0.) - k*area_y/del_y # North cell
+                    A[i,i-numcells] = -max(F_j[i+numcells-1],0.) - k*area_y/del_y # South cell
                     A[i,i] = abs(A[i,i-1]) + abs(A[i,i+1]) + abs(A[i,i+numcells]) + \
                          abs(A[i,i-numcells]) + \
-                         (F_i*u[i+2] - F_i*u[i+1] + F_j*v[i+numcells+2] - F_j*v[i+1])  # Diagonal element
+                         (F_i[i+2] - F_i[i+1] + F_j[i+numcells+2] - F_j[i+1])  # Diagonal element
 
 
 ######## Gauss-Seidel iterative method ########
@@ -180,7 +182,7 @@ def gauss(A, b, x, n):
             break
      return x
 
-########################
+################################################
 
 #Solve the system 
 phi_fvm = gauss(A, b, phi, 1000)
