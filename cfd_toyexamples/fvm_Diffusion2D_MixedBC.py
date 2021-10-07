@@ -123,7 +123,7 @@ for i in range(len(b)): # Fill from bottom to top
                     A[i,i-1] = -k*area_x/del_x # West cell
                     A[i,i-numcells] = -k*area_y/del_y # South cell
                     A[i,i] = abs(A[i,i-1]) + abs(A[i,i+1]) + abs(A[i,i-numcells]) \
-                         + k*area_x/del_x_b
+                         + k*area_y/del_y_b
           # Right boundary cells excluding corners
           elif i in right_face_indices:
                if i != numcells-1 and i != len(b)-1:
