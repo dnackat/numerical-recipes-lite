@@ -16,13 +16,13 @@ import numpy as np
 
 
 # Parameters
-k = 0.0    # Constant thermal conductivity in W/m-K
+k = 0. #3000.  # Constant thermal conductivity in W/m-K
 rho = 2.0  # Density of the fluid in kg/m3
 h = 0.0   # Constant convective heat transfer coefficient in W/m2-K
 domain_length = 3.0 # In both x and y directions in m
 
 # Create the grid
-numcells = 3   # Number of cells in the x and y directions
+numcells = 50   # Number of cells in the x and y directions
 numfaces = numcells + 1 # Number of faces in the x and y directions
 fc_x = np.linspace(0.,domain_length,numcells+1)  # x face centroids
 fc_y = np.linspace(0.,domain_length,numcells+1)  # y face centroids
@@ -48,13 +48,13 @@ area_y = delta_x*thickness # Areas of faces with normal vector aligned with the 
 cell_volume = delta_x*delta_y*thickness
 
 # Velocity field at face centroids
-u = 1. + fxx**2
-v = 1. + fyy**2
+u = 1. + fc_x**2
+v = 1. + fc_y**2
 
 # Volumetric source. Depends on cell centroid values
 S = 0.5*4*(cxx + cyy)*cell_volume
 
-# Fluxes
+# Fluxes through faces
 F_i = rho*area_x*u
 F_j = rho*area_y*v
 
@@ -93,16 +93,19 @@ A = np.zeros((len(b),len(b))) # Each row corresonds to a cell centroid
 
 ##### Function to determine face indices based on cell centroids #####
 def faceid(a, name="west"):
+     # What row am I on?
      rowid = int(np.floor(a/numcells))
+     # What column am I on?
+     colid = int(np.mod(a, numcells))
 
      if name == "west":
-          return a + rowid
+          return colid
      elif name == "east": 
-          return a + rowid + 1
+          return colid + 1
      elif name == "south":
-          return a + rowid + 1
+          return rowid
      elif name == "north":
-          return a + rowid + numfaces
+          return rowid + 1
      else:
           print("Invalid face index! \n")
           return None
