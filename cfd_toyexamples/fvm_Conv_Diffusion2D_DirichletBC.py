@@ -78,17 +78,17 @@ b = np.zeros((len(cxx),1)) # Length = no. of cell centroids
 # Populate the vector of constants
 b = np.copy(S.reshape((len(S),1)))     # Source term contribution at every cell centroid
 
-# Boundary face indices
-left_face_indices = np.array([i for i in range(0,len(b),numcells)])
-right_face_indices = np.array([i for i in range(numcells-1,len(b),numcells)])
-top_face_indices = np.array([i for i in range(len(b)-numcells,len(b))])
-bottom_face_indices = np.array([i for i in range(0,numcells)])
+# Boundary cell indices
+left_cell_indices = np.array([i for i in range(0,len(b),numcells)])
+right_cell_indices = np.array([i for i in range(numcells-1,len(b),numcells)])
+top_cell_indices = np.array([i for i in range(len(b)-numcells,len(b))])
+bottom_cell_indices = np.array([i for i in range(0,numcells)])
 
 # Contributions to b from boundaries 
-b[bottom_face_indices] += F_j[0]*phi_bottom + k*area_y*phi_bottom/del_y_b # Dirichlet BC contribution on bottom face
-b[top_face_indices] += 0. #k*area_y*phi_top/del_y_b # Dirichlet boundary on top face
-b[left_face_indices] += F_i[0]*phi_left + k*area_x*phi_left/del_x_b # Dirichlet boundary on left faces
-b[right_face_indices] += 0. #k*area_x*phi_right/del_x_b # Dirichlet boundary on right faces
+b[bottom_cell_indices] += F_j[0]*phi_bottom + k*area_y*phi_bottom/del_y_b # Dirichlet BC contribution on bottom face
+b[top_cell_indices] += 0. #k*area_y*phi_top/del_y_b # Dirichlet boundary on top face
+b[left_cell_indices] += F_i[0]*phi_left + k*area_x*phi_left/del_x_b # Dirichlet boundary on left faces
+b[right_cell_indices] += 0. #k*area_x*phi_right/del_x_b # Dirichlet boundary on right faces
   
 
 # Matrix of coefficients (size = size(b)*size(phi))
@@ -122,7 +122,7 @@ def faceid(a, name="west"):
 # Populate A. It is sparse and diagonally dominant, so a single loop should suffice.
 for i in range(len(b)): # Fill from bottom to top
           # Bottom boundary cells including corners
-          if i in bottom_face_indices: 
+          if i in bottom_cell_indices: 
                if i == 0: # Bottom left cell
                     A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
                     A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
@@ -143,7 +143,7 @@ for i in range(len(b)): # Fill from bottom to top
                          + k*area_y/del_y_b + \
                     (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")])
           # Top boundary cells including corners
-          elif i in top_face_indices: 
+          elif i in top_cell_indices: 
                if i == len(b)-numcells: # Top left cell
                     A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
                     A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) - k*area_y/del_y # South cell
@@ -164,7 +164,7 @@ for i in range(len(b)): # Fill from bottom to top
                          + k*area_y/del_y_b + \
                          (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])
           # Right boundary cells excluding corners
-          elif i in right_face_indices:
+          elif i in right_cell_indices:
                if i != numcells-1 and i != len(b)-1:
                     A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
                     A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
@@ -173,7 +173,7 @@ for i in range(len(b)): # Fill from bottom to top
                          + k*area_x/del_x_b + \
                          (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])
           # Left boundary cells excluding corners
-          elif i in left_face_indices: 
+          elif i in left_cell_indices: 
                if i != 0 and i != len(b)-numcells: 
                     A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
                     A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
