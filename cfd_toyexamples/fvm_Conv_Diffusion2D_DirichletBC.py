@@ -121,75 +121,75 @@ def faceid(a, name="west"):
 
 # Populate A. It is sparse and diagonally dominant, so a single loop should suffice.
 for i in range(len(b)): # Fill from bottom to top
-          # Bottom boundary cells including corners
-          if i in bottom_cell_indices: 
-               if i == 0: # Bottom left cell
-                    A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
-                    A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
-                    A[i,i] = abs(A[i,i+1]) + abs(A[i,i+numcells]) \
-                         + k*area_x/del_x_b + k*area_y/del_y_b + \
-                         (F_i[faceid(i,"east")] + F_j[faceid(i,"north")])  
-               elif i == numcells-1: # Bottom right cell
-                    A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
-                    A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
-                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i+numcells]) \
-                         + k*area_x/del_x_b + k*area_y/del_y_b + \
-                         (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")])
-               else: # Remaining bottom cells
-                    A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
-                    A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
-                    A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
-                    A[i,i] = abs(A[i,i+1]) + abs(A[i,i-1]) + abs(A[i,i+numcells]) \
-                         + k*area_y/del_y_b + \
-                    (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")])
-          # Top boundary cells including corners
-          elif i in top_cell_indices: 
-               if i == len(b)-numcells: # Top left cell
-                    A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
-                    A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) - k*area_y/del_y # South cell
-                    A[i,i] = abs(A[i,i+1]) + abs(A[i,i-numcells]) + k*area_y/del_y_b \
-                         + k*area_x/del_x_b + \
-                         (F_i[faceid(i,"east")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])
-               if i == len(b)-1: # Top right cell
-                    A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
-                    A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) - k*area_y/del_y # South cell
-                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i-numcells]) + k*area_y/del_y_b \
-                         + k*area_x/del_x_b + \
-                         (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])
-               else: # Remaining top faces
-                    A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
-                    A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
-                    A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) - k*area_y/del_y # South cell
-                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i+1]) + abs(A[i,i-numcells]) \
-                         + k*area_y/del_y_b + \
-                         (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])
-          # Right boundary cells excluding corners
-          elif i in right_cell_indices:
-               if i != numcells-1 and i != len(b)-1:
-                    A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
-                    A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
-                    A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) - k*area_y/del_y # South cell
-                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i+numcells]) + abs(A[i,i-numcells]) \
-                         + k*area_x/del_x_b + \
-                         (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])
-          # Left boundary cells excluding corners
-          elif i in left_cell_indices: 
-               if i != 0 and i != len(b)-numcells: 
-                    A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
-                    A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
-                    A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) - k*area_y/del_y # South cell
-                    A[i,i] = abs(A[i,i+1]) + abs(A[i,i+numcells]) + abs(A[i,i-numcells]) \
-                         + k*area_x/del_x_b + \
-                         (F_i[faceid(i,"east")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])
-          # Interior cells
-          else: 
-                    A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
-                    A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
-                    A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
-                    A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) - k*area_y/del_y # South cell
-                    A[i,i] = abs(A[i,i-1]) + abs(A[i,i+1]) + abs(A[i,i+numcells]) + \
-                         abs(A[i,i-numcells]) + \
-                         (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])  # Diagonal element
+     # Bottom boundary cells including corners
+     if i in bottom_cell_indices: 
+           if i == 0: # Bottom left cell
+               A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
+               A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
+               A[i,i] = abs(A[i,i+1]) + abs(A[i,i+numcells]) \
+                     + k*area_x/del_x_b + k*area_y/del_y_b + \
+                     (F_i[faceid(i,"east")] + F_j[faceid(i,"north")])  
+           elif i == numcells-1: # Bottom right cell
+               A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
+               A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
+               A[i,i] = abs(A[i,i-1]) + abs(A[i,i+numcells]) \
+                     + k*area_x/del_x_b + k*area_y/del_y_b + \
+                     (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")])
+           else: # Remaining bottom cells
+               A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
+               A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
+               A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
+               A[i,i] = abs(A[i,i+1]) + abs(A[i,i-1]) + abs(A[i,i+numcells]) \
+                     + k*area_y/del_y_b + \
+               (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")])
+     # Top boundary cells including corners
+     elif i in top_cell_indices: 
+           if i == len(b)-numcells: # Top left cell
+               A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
+               A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) - k*area_y/del_y # South cell
+               A[i,i] = abs(A[i,i+1]) + abs(A[i,i-numcells]) + k*area_y/del_y_b \
+                     + k*area_x/del_x_b + \
+                     (F_i[faceid(i,"east")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])
+           if i == len(b)-1: # Top right cell
+               A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
+               A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) - k*area_y/del_y # South cell
+               A[i,i] = abs(A[i,i-1]) + abs(A[i,i-numcells]) + k*area_y/del_y_b \
+                     + k*area_x/del_x_b + \
+                     (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])
+           else: # Remaining top faces
+               A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
+               A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
+               A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) - k*area_y/del_y # South cell
+               A[i,i] = abs(A[i,i-1]) + abs(A[i,i+1]) + abs(A[i,i-numcells]) \
+                     + k*area_y/del_y_b + \
+                     (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])
+     # Right boundary cells excluding corners
+     elif i in right_cell_indices:
+           if i != numcells-1 and i != len(b)-1:
+               A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
+               A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
+               A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) - k*area_y/del_y # South cell
+               A[i,i] = abs(A[i,i-1]) + abs(A[i,i+numcells]) + abs(A[i,i-numcells]) \
+                     + k*area_x/del_x_b + \
+                     (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])
+     # Left boundary cells excluding corners
+     elif i in left_cell_indices: 
+           if i != 0 and i != len(b)-numcells: 
+               A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
+               A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
+               A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) - k*area_y/del_y # South cell
+               A[i,i] = abs(A[i,i+1]) + abs(A[i,i+numcells]) + abs(A[i,i-numcells]) \
+                     + k*area_x/del_x_b + \
+                     (F_i[faceid(i,"east")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])
+     # Interior cells
+     else: 
+               A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
+               A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
+               A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
+               A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) - k*area_y/del_y # South cell
+               A[i,i] = abs(A[i,i-1]) + abs(A[i,i+1]) + abs(A[i,i+numcells]) + \
+                     abs(A[i,i-numcells]) + \
+                     (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])  # Diagonal element
 
 
 ######## Gauss-Seidel iterative method ########
