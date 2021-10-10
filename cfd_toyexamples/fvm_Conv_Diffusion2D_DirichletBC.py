@@ -15,7 +15,7 @@ Assumptions: 1. Linear profile for the gradient
 """
 # Preliminaries
 import numpy as np
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 
 # Parameters
@@ -25,7 +25,7 @@ h = 0.0   # Constant convective heat transfer coefficient in W/m2-K
 domain_length = 3.0 # In both x and y directions in m
 
 # Create the grid
-numcells = 3   # Number of cells in the x and y directions
+numcells = 5   # Number of cells in the x and y directions
 numfaces = numcells + 1 # Number of faces in the x and y directions
 fc_x = np.linspace(0.,domain_length,numcells+1)  # x face centroids
 fc_y = np.linspace(0.,domain_length,numcells+1)  # y face centroids
@@ -214,10 +214,10 @@ def gauss(A, b, x, itr=1000, tol=1.e-6):
 ################################################
 
 # Solve the system 
-phi_fvm = gauss(A, b, phi, 1000)
+phi_fvm = gauss(A, b, phi, 1000).reshape((numcells, numcells))
 
 # Invert phi so that it corresponds with the given geometry
-Z = np.flip(phi_fvm.reshape((numcells,numcells)),axis=0)
+Z = np.flip(phi_fvm, axis=0)
 
 # Print the result
 print("\n")
@@ -231,4 +231,18 @@ print("------------ Solution of the linear system A*phi = b ------------")
 print("\n")
 print("phi values from FVM method:\n")
 print(Z.round(3))
+
+##### Plot the results (without interpolation to interior nodes) #####
+cells_x, cells_y = np.meshgrid(cc_x, cc_y)
+level_curves = [i for i in np.arange(0.1,1.1,0.1)]
+
+fig, ax = plt.subplots(figsize=(16,16))
+#c = ax.pcolormesh(cells_x, cells_y, phi_fvm, cmap='nipy_spectral', \
+                  #vmin=phi_fvm.min(), vmax=phi_fvm.max(), shading='auto')
+ax.axis([cells_x.min(), cells_x.max(), cells_y.min(), cells_y.max()])
+#fig.colorbar(c, ax=ax)
+CS = ax.contour(cells_x, cells_y, phi_fvm, level_curves, linewidths=2)
+ax.clabel(CS, inline=True, fmt='%1.3f', fontsize=16)
+plt.show()
+
 
