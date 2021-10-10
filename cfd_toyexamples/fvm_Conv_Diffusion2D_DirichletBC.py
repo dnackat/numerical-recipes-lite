@@ -51,8 +51,8 @@ area_y = delta_x*thickness # Areas of faces with normal vector aligned with the 
 cell_volume = delta_x*delta_y*thickness
 
 # Velocity field at face centroids
-u = 1. + fc_x**2
-v = 1. + fc_y**2
+u = 1. + fc_x**2    # x-component of velocity 
+v = 1. + fc_y**2    # y-component of velocity
 
 # Volumetric source. Depends on cell centroid values
 S = 0.5*4*(cxx + cyy)*cell_volume
@@ -86,9 +86,9 @@ bottom_cell_indices = np.array([i for i in range(0,numcells)])
 
 # Contributions to b from boundaries 
 b[bottom_cell_indices] += F_j[0]*phi_bottom + k*area_y*phi_bottom/del_y_b # Dirichlet BC contribution on bottom face
-b[top_cell_indices] += 0. #k*area_y*phi_top/del_y_b # Dirichlet boundary on top face
+b[top_cell_indices] += k*area_y*phi_top/del_y_b # Dirichlet boundary on top face
 b[left_cell_indices] += F_i[0]*phi_left + k*area_x*phi_left/del_x_b # Dirichlet boundary on left faces
-b[right_cell_indices] += 0. #k*area_x*phi_right/del_x_b # Dirichlet boundary on right faces
+b[right_cell_indices] += k*area_x*phi_right/del_x_b # Dirichlet boundary on right faces
   
 
 # Matrix of coefficients (size = size(b)*size(phi))
