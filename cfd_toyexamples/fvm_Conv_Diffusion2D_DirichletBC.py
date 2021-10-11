@@ -11,7 +11,12 @@ using FVM on a uniform, Cartesian mesh.
 Governing PDE: div(Gamma*grad(phi)) - div(rho*vel_vector*phi) + Sources = 0
 
 Assumptions: 1. Linear profile for the gradient
-             2. First-order Upwind Difference Scheme (UDS) for the convection term  
+             2. First-order Upwind Difference Scheme (UDS) for the convection term
+             3. Diffusion is ignored on the outflow faces (right and top)
+             
+Boundary conditions:
+     1. Scalar, phi = 0 on the left face
+     2. Scalar, phi = 1 on the right face
 """
 # Preliminaries
 import numpy as np
@@ -19,7 +24,7 @@ import matplotlib.pyplot as plt
 
 
 # Parameters
-k = 3.  # Constant thermal conductivity in W/m-K
+k = 30.  # Constant thermal conductivity in W/m-K
 rho = 2.0  # Density of the fluid in kg/m3
 h = 0.0   # Constant convective heat transfer coefficient in W/m2-K
 domain_length = 3.0 # In both x and y directions in m
@@ -86,9 +91,9 @@ bottom_cell_indices = np.array([i for i in range(0,numcells)])
 
 # Contributions to b from boundaries 
 b[bottom_cell_indices] += F_j[0]*phi_bottom + k*area_y*phi_bottom/del_y_b # Dirichlet BC contribution on bottom face
-b[top_cell_indices] += k*area_y*phi_top/del_y_b # Dirichlet boundary on top face
+b[top_cell_indices] += 0. #k*area_y*phi_top/del_y_b # Dirichlet boundary on top face
 b[left_cell_indices] += F_i[0]*phi_left + k*area_x*phi_left/del_x_b # Dirichlet boundary on left faces
-b[right_cell_indices] += k*area_x*phi_right/del_x_b # Dirichlet boundary on right faces
+b[right_cell_indices] += 0. #k*area_x*phi_right/del_x_b # Dirichlet boundary on right faces
   
 
 # Matrix of coefficients (size = size(b)*size(phi))
@@ -133,7 +138,7 @@ for i in range(len(b)): # Fill from bottom to top
                A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
                A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
                A[i,i] = abs(A[i,i-1]) + abs(A[i,i+numcells]) \
-                     + k*area_x/del_x_b + k*area_y/del_y_b + \
+                     + k*area_y/del_y_b + \
                      (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")])
            else: # Remaining bottom cells
                A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
@@ -147,21 +152,19 @@ for i in range(len(b)): # Fill from bottom to top
            if i == len(b)-numcells: # Top left cell
                A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
                A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) - k*area_y/del_y # South cell
-               A[i,i] = abs(A[i,i+1]) + abs(A[i,i-numcells]) + k*area_y/del_y_b \
+               A[i,i] = abs(A[i,i+1]) + abs(A[i,i-numcells]) \
                      + k*area_x/del_x_b + \
                      (F_i[faceid(i,"east")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])
            if i == len(b)-1: # Top right cell
                A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
                A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) - k*area_y/del_y # South cell
-               A[i,i] = abs(A[i,i-1]) + abs(A[i,i-numcells]) + k*area_y/del_y_b \
-                     + k*area_x/del_x_b + \
+               A[i,i] = abs(A[i,i-1]) + abs(A[i,i-numcells]) + \
                      (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])
            else: # Remaining top faces
                A[i,i+1] = -max(-F_i[faceid(i,"east")],0.) - k*area_x/del_x # East cell
                A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
                A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) - k*area_y/del_y # South cell
-               A[i,i] = abs(A[i,i-1]) + abs(A[i,i+1]) + abs(A[i,i-numcells]) \
-                     + k*area_y/del_y_b + \
+               A[i,i] = abs(A[i,i-1]) + abs(A[i,i+1]) + abs(A[i,i-numcells]) + \
                      (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])
      # Right boundary cells excluding corners
      elif i in right_cell_indices:
@@ -169,8 +172,7 @@ for i in range(len(b)): # Fill from bottom to top
                A[i,i-1] = -max(F_i[faceid(i,"west")],0.) - k*area_x/del_x # West cell
                A[i,i+numcells] = -max(-F_j[faceid(i,"north")],0.) - k*area_y/del_y # North cell
                A[i,i-numcells] = -max(F_j[faceid(i,"south")],0.) - k*area_y/del_y # South cell
-               A[i,i] = abs(A[i,i-1]) + abs(A[i,i+numcells]) + abs(A[i,i-numcells]) \
-                     + k*area_x/del_x_b + \
+               A[i,i] = abs(A[i,i-1]) + abs(A[i,i+numcells]) + abs(A[i,i-numcells]) + \
                      (F_i[faceid(i,"east")] - F_i[faceid(i,"west")] + F_j[faceid(i,"north")] - F_j[faceid(i,"south")])
      # Left boundary cells excluding corners
      elif i in left_cell_indices: 
