@@ -27,14 +27,34 @@ p1 = 0.0
 p2 = 0.0
 p3 = 0.0
 
+# Geometry of flow domain
+numcells = 3
+dx = L/numcells
+
 # Under-relaxation and tolerance for convergence
 tolerance = 1.e-6 
-alphaU = 1     # URF for x-velocity
-alphaP = 1     # URF for pressure
+alphaU = 1     # URF for x-velocity (no relaxation if set equal to 1)
+alphaP = 1     # URF for pressure (no relaxation if set equal to 1)
 
 # Maximum iterations permitted
 maxiter = 100 
 
 # Begin the main loop 
-
- 
+for i in range(maxiter):
+     
+     # Calculate/update momentum coefficients
+     aA = C*rho*uA*dx
+     dA = 1./aA
+     aB = C*rho*uB*dx
+     dB = 1./aB
+     
+     # Constants, b
+     bA = 0.5*rho*C*uA**2*dx
+     bB = 0.5*rho*C*uB**2*dx
+     
+     # Calculate residual for the momentum equations
+     u_residual = abs(uA*aA/alphaU - ((p1 - p2) + bA + uA*aA*(1.0 - alphaU)/alphaU)) + \
+ 		     abs(uB*aB/alphaU - ((p2 - p3) + bB + uB*aB*(1.0 - alphaU)/alphaU))
+     u_residual = u_residual/(abs(uA*aA/alphaU + uB*aB/alphaU)) # Normalize to take care of roundoff errors
+     
+     
