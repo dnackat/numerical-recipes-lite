@@ -57,4 +57,33 @@ for i in range(maxiter):
  		     abs(uB*aB/alphaU - ((p2 - p3) + bB + uB*aB*(1.0 - alphaU)/alphaU))
      u_residual = u_residual/(abs(uA*aA/alphaU + uB*aB/alphaU)) # Normalize to take care of roundoff errors
      
+     # Solve momentum equations (under-relaxed)
+     uA = ((p1 - p2) + bA + uA*aA*(1.0 - alphaU)/alphaU)*alphaU/aA
+     uB = ((p2 - p3) + uB*aB*(1.0 - alphaU)/alphaU)*alphaU/aB
+     
+     # Calculate residual for the continuity equations
+     c_residual = (abs(uA - 1) + abs(uB - uA) + abs(1 - uB))
+     c_residual = c_residual/(0.5*((abs(uA) + abs(uB - uA) + abs(uB)))) # Normalize
+     
+     # Check for convergence
+     if (u_residual + u_residual < tolerance):
+          print("Converged solution is: p1 = {:.2f} \n \
+                p2 = {:.2f} \n p3 = {:.2f} \n uA = {:.2f} \n \
+                uB = {:.2f}\n").format(p1, p2, p3, uA, uB)
+                
+     
+     # Solve the linear system for pprimes 
+     coeffMatrix = np.array([[dA, -dA, 0], [dA, -(dA + dB), dB], [0, dB, -dB]])
+     bVector = np.array([[1 - uA],[uB - uA],[1 - uB]])
+     
+     x, y, z = np.linalg.solve(coeffMatrix, bVector)
+     
+     p1prime = x.item()
+     p2prime = y.item()
+     p3prime = z.item()
+     
+     # Correct the velocities and pressures
+     
+     
+     
      
