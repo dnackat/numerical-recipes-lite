@@ -62,25 +62,24 @@ for i in range(maxiter):
      uB = ((p2 - p3) + bB + uB*aB*(1.0 - alphaU)/alphaU)*alphaU/aB
      
      # Calculate residual for the continuity equations
-     c_residual = (abs(uA - 1) + abs(uB - uA) + abs(1 - uB))
+     c_residual = (abs(uA - uLB) + abs(uB - uA) + abs(uRB - uB))
      c_residual = c_residual/(0.5*((abs(uA) + abs(uB - uA) + abs(uB)))) # Normalize
      
      # Check for convergence
-     if (u_residual + u_residual < tolerance):
-          print("Converged solution is: p1 = {:.2f} \n \
-                p2 = {:.2f} \n p3 = {:.2f} \n uA = {:.2f} \n \
-                uB = {:.2f}\n".format(p1, p2, p3, uA, uB))
+     if (u_residual + c_residual < tolerance):
+          print("Converged solution is: p1 = {:.2f}, p2 = {:.2f}, p3 = {:.2f}, uA = {:.2f}, uB = {:.2f}\n".format(p1, p2, p3, uA, uB))
+          break
                 
      
      # Solve the linear system for pprimes 
-     coeffMatrix = np.array([[dA, -dA, 0], [dA, -(dA + dB), dB], [0, dB, -dB]])
-     bVector = np.array([[1 - uA],[uB - uA],[1 - uB]])
+     coeffMatrix = np.array([[dA, -dA], [0, dB]])
+     bVector = np.array([[uLB - uA],[uA - uB + dB*p3]])
      
-     x, y, z = np.linalg.solve(coeffMatrix, bVector)
+     x, y = np.linalg.solve(coeffMatrix, bVector)
      
      p1prime = x.item()
      p2prime = y.item()
-     p3prime = z.item()
+     p3prime = p2prime - (uRB - uB)/dB
      
      # Correct the velocities and pressures
      uAprime = dA*(p1prime - p2prime)
@@ -92,12 +91,12 @@ for i in range(maxiter):
      p3 = p3 + alphaP*p3prime
      
      # Check if continuity is satisfied 
-     cont1 = uA - 1.
+     cont1 = uA - uLB
      cont2 = uB - uA
-     cont3 = 1. - uB
+     cont3 = uRB - uB
      
      # Output 
      if i == 0:
-          print("Iter \t uA \t uB \t p1 \t p2 \t p3 \t u_res \t cont_res \t cont1 \t cont2 \t cont3")
+          print("Iter \t uA \t uB \t p1 \t p2 \t p3 \t u_res \t cont_res")
           
-     print("{0:2d} {0:1.3e} {0:1.3e} {0:1.3e} {0:1.3e} {0:1.3e} {0:1.3e} {0:1.3e} {0:1.3e} {0:1.3e} {0:1.3e}".format(i, uA, uB, p1, p2, p3, u_residual, c_residual, cont1, cont2, cont3))  
+     print("{0:2d} {0:1.3e} {0:1.3e} {0:1.3e} {0:1.3e} {0:1.3e} {0:1.3e} {0:1.3e}".format(i, uA, uB, p1, p2, p3, u_residual, c_residual))  
