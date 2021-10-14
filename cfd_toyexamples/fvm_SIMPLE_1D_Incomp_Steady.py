@@ -33,8 +33,8 @@ dx = L/numcells
 
 # Under-relaxation and tolerance for convergence
 tolerance = 1.e-6 
-alphaU = 1     # URF for x-velocity (no relaxation if set equal to 1)
-alphaP = 1     # URF for pressure (no relaxation if set equal to 1)
+alphaU = 0.9    # URF for x-velocity (no relaxation if set equal to 1)
+alphaP = 0.7     # URF for pressure (no relaxation if set equal to 1)
 
 # Maximum iterations permitted
 maxiter = 100
@@ -67,28 +67,32 @@ for i in range(maxiter):
      
      # Check for convergence
      if (u_residual + c_residual < tolerance):
+          print("\n")
+          print("=============================================================================")
           print("Converged solution is: p1 = {:.2f}, p2 = {:.2f}, p3 = {:.2f}, uA = {:.2f}, uB = {:.2f}\n".format(p1, p2, p3, uA, uB))
+          print("=============================================================================")
+          print("\n")
           break
                 
      
      # Gauss-Seidel to iteratively the linear system to get pprimes
-     coeffMatrix = np.zeros((2,2))
+     coeffMatrix = np.zeros((numcells-1,numcells-1))
      coeffMatrix[0][0] = dA 
      coeffMatrix[0][1] = -dA
      coeffMatrix[1][0] = -dA
      coeffMatrix[1][1] = dA + dB #np.array([[dA, -dA], [-dA, dA + dB]])
      
-     bVector = np.zeros((2,1)) #np.array([[uLB - uA],[uA - uB + dB*p3]])
+     bVector = np.zeros((numcells-1,1)) #np.array([[uLB - uA],[uA - uB + dB*p3]])
      bVector[0] = uLB - uA
-     bVector[1] = uA - uB + dB*p3
+     bVector[1] = 0.0
      
      itr = 100
-     tol = 1.e-4
+     tol = 1.e-6
      x = np.zeros(bVector.shape)
      p3prime = 0.0
      for j in range(itr):
           xprev = x.copy()
-          bVector[1] = uA - uB + dB*p3prime
+          bVector[1] = (uA - uB) + dB*p3prime
           L = np.tril(coeffMatrix)
           U = coeffMatrix - L
           x = np.dot(np.linalg.inv(L), bVector - np.dot(U, x))
@@ -96,9 +100,10 @@ for i in range(maxiter):
           p2prime = x[1].item()
           p3prime = p2prime - (uRB - uB)/dB
           if np.linalg.norm(x - xprev) < tol:
-               print("\n")
-               print("GS converged in",j+1,"iterations.")
-               print("pprimes for iteration {:2d} are: {:.2f}, {:.2f}, and {:.2f}".format(i, p1prime, p2prime, p3prime))
+               #print("\n")
+               #print("GS converged in",j+1,"iterations.")
+               #print("pprimes for iteration {:2d} are: {:.3f}, {:.3f}, and {:.3f}".format(i, p1prime, p2prime, p3prime))
+               #print("\n")
                break
      
      # Correct the velocities and pressures
@@ -117,6 +122,6 @@ for i in range(maxiter):
      
      # Output 
      if i == 0:
-          print("Iter \t uA \t uB \t p1 \t p2 \t p3 \t u_res \t cont_res")
+          print("It   uA \t uB \t p1   p2 \t p3 \t u_res     cont_res")
           
-     print("{0:2d} {0:1.3e} {0:1.3e} {0:1.3e} {0:1.3e} {0:1.3e} {0:1.3e} {0:1.3e}".format(i, uA, uB, p1, p2, p3, u_residual, c_residual))  
+     print("{:2d}, {:.3f}, {:.3f}, {:.3f}, {:.3f}, {:.3f}, {:1.3e}, {:1.3e}".format(i, uA, uB, p1, p2, p3, u_residual, c_residual))  
