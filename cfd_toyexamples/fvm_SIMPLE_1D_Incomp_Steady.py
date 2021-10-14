@@ -72,13 +72,29 @@ for i in range(maxiter):
                 
      
      # Solve the linear system for pprimes 
-     coeffMatrix = np.array([[dA, -dA], [0, dB]])
-     bVector = np.array([[uLB - uA],[uA - uB + dB*p3]])
+     coeffMatrix = np.array([[dA, -dA], [-dA, dA + dB]])
      
-     x, y = np.linalg.solve(coeffMatrix, bVector)
+     # Gauss-Seidel to iteratively the linear system to get pprimes
+     itr = 100
+     tol = 1.e-4
+     x = np.zeros((numcells-1,1))
+     for i in range(itr):
+          xprev = x
+          a = uLB - uA
+          b = uA - uB + dB*p3
+          bVector = np.array([[a],[b]])
+          L = np.tril(coeffMatrix)
+          U = coeffMatrix - L
+          x = np.dot(np.linalg.inv(L), bVector - np.dot(U, x))
+          p3 = x[1] - (uRB - uB)/dB
+          if np.sqrt(np.sum((x - xprev)**2)) < tol:
+               print("\n")
+               print("GS converged in",i,"iterations.")
+               print("pprimes for iteration {} are: {:.2f}, {:.2f}, and {:.2f}".format(i, x[0], x[1], p3))
+               break
      
-     p1prime = x.item()
-     p2prime = y.item()
+     p1prime = x[0]
+     p2prime = x[1]
      p3prime = p2prime - (uRB - uB)/dB
      
      # Correct the velocities and pressures
