@@ -34,7 +34,7 @@ dx = L/numcells
 # Under-relaxation and tolerance for convergence
 tolerance = 1.e-6 
 alphaU = 0.9    # URF for x-velocity (no relaxation if set equal to 1)
-alphaP = 0.7     # URF for pressure (no relaxation if set equal to 1)
+alphaP = 0.8     # URF for pressure (no relaxation if set equal to 1)
 
 # Maximum iterations permitted
 maxiter = 100
@@ -122,6 +122,8 @@ for i in range(maxiter):
      
      # Output 
      if i == 0:
-          print("It   uA \t uB \t p1   p2 \t p3 \t u_res     cont_res")
+          print("----------------------------------------------------------------------")
+          print("It |  uA \t uB \t    p1 \t   p2 \t  p3  \t    u_res       cont_res")
+          print("----------------------------------------------------------------------")
           
-     print("{:2d}, {:.3f}, {:.3f}, {:.3f}, {:.3f}, {:.3f}, {:1.3e}, {:1.3e}".format(i, uA, uB, p1, p2, p3, u_residual, c_residual))  
+     print("{:2d} | {:.3f} |  {:.3f} |  {:.3f} |{:.3f} |{:.3f} |  {:1.3e} |  {:1.3e}".format(i, uA, uB, p1, p2, p3, u_residual, c_residual))  
