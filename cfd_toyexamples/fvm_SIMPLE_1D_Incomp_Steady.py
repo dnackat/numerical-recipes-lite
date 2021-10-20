@@ -27,6 +27,9 @@ p1 = 0.0
 p2 = 0.0
 p3 = 0.0
 
+# Only velocity BCs are given, so set one of the pressue corrections to zero
+p3prime = 0.0
+
 # Geometry of flow domain
 numcells = 3
 dx = L/numcells
@@ -75,36 +78,13 @@ for i in range(maxiter):
           break
                 
      
-     # Gauss-Seidel to iteratively the linear system to get pprimes
-     coeffMatrix = np.zeros((numcells-1,numcells-1))
-     coeffMatrix[0][0] = dA 
-     coeffMatrix[0][1] = -dA
-     coeffMatrix[1][0] = -dA
-     coeffMatrix[1][1] = dA + dB #np.array([[dA, -dA], [-dA, dA + dB]])
+     # Solve the linear system for pprimes
+     coeffMatrix = np.array([[dA, -dA], [-dA, dA + dB]]) 
+     bVector = np.array([[uLB - uA],[uA - uB + dB*p3]])
      
-     bVector = np.zeros((numcells-1,1)) #np.array([[uLB - uA],[uA - uB + dB*p3]])
-     bVector[0] = uLB - uA
-     bVector[1] = 0.0
-     
-     itr = 100
-     tol = 1.e-6
-     x = np.zeros(bVector.shape)
-     p3prime = 0.0
-     for j in range(itr):
-          xprev = x.copy()
-          bVector[1] = (uA - uB) + dB*p3prime
-          L = np.tril(coeffMatrix)
-          U = coeffMatrix - L
-          x = np.dot(np.linalg.inv(L), bVector - np.dot(U, x))
-          p1prime = x[0].item()
-          p2prime = x[1].item()
-          p3prime = p2prime - (uRB - uB)/dB
-          if np.linalg.norm(x - xprev) < tol:
-               #print("\n")
-               #print("GS converged in",j+1,"iterations.")
-               #print("pprimes for iteration {:2d} are: {:.3f}, {:.3f}, and {:.3f}".format(i, p1prime, p2prime, p3prime))
-               #print("\n")
-               break
+     p1prime, p2prime = np.linalg.solve(coeffMatrix, bVector)
+     p1prime = p1prime.item()
+     p2prime = p2prime.item()
      
      # Correct the velocities and pressures
      uAprime = dA*(p1prime - p2prime)
