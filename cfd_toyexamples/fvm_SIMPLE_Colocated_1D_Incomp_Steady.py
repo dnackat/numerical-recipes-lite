@@ -49,29 +49,51 @@ for i in range(maxiter):
      
      # Calculate/update momentum coefficients
      aA = C*rho*uA*dx/alphaU
-     bA = (1.0 - alphaU)*aA*uA
+     bA = 0.5*rho*C*uA**2*dx + (1.0 - alphaU)*aA*uA
      dA = 1./aA
      
      aB = C*rho*uB*dx/alphaU
-     bB = (1.0 - alphaU)*aB*uB
+     bB = 0.5*rho*C*uB**2*dx + (1.0 - alphaU)*aB*uB
      dB = 1./aB
      
      aC = C*rho*uC*dx/alphaU
-     bC = (1.0 - alphaU)*aC*uC
+     bC = 0.5*rho*C*uC**2*dx + (1.0 - alphaU)*aC*uC
      dC = 1./aC
      
-     a1 = C*rho*uB*dx/(2.0*alphaU)
-     b1 = (1.0 - alphaU)*a1*u1
+     a1 = C*rho*u1*dx/(2.0*alphaU)
+     b1 = 0.5*rho*C*u1**2*dx + (1.0 - alphaU)*a1*u1
      d1 = 1./a1
      
+     a4 = C*rho*u4*dx/(2.0*alphaU)
+     b4 = 0.5*rho*C*u4**2*dx + (1.0 - alphaU)*a4*u4
+     d4 = 1./a4
+     
      # Calculate residual for the momentum equations
-     u_residual = abs(uA*aA/alphaU - ((p1 - p2) + bA + uA*aA*(1.0 - alphaU)/alphaU)) + \
- 		     abs(uB*aB/alphaU - ((p2 - p3) + bB + uB*aB*(1.0 - alphaU)/alphaU))
-     u_residual = u_residual/(abs(uA*aA/alphaU + uB*aB/alphaU)) # Normalize to take care of roundoff errors
+     u_residual = abs(uA*aA - (p1 - p2) - bA) + \
+      		      abs(uB*aB - (p2 - p3) - bB) + \
+                  abs(uC*aC - (p3 - p4) - bC) 
+     u_residual = u_residual/(abs(uA*aA + uB*aB + uC*aC)) # Normalize to take care of roundoff errors
      
      # Solve momentum equations (under-relaxed)
-     uA = ((p1 - p2) + bA + uA*aA*(1.0 - alphaU)/alphaU)*alphaU/aA
-     uB = ((p2 - p3) + bB + uB*aB*(1.0 - alphaU)/alphaU)*alphaU/aB
+     uA = ((p1 - p2) + bA)/aA
+     uB = ((p2 - p3) + bB)/aB
+     uC = ((p3 - p4) + bC)/aC
+     
+     # Calculate hat velocities
+     uAhat = bA/aA
+     uBhat = bB/aB
+     uChat = bC/aC
+     
+     u2hat = (uAhat + uBhat)/2.0
+     u3hat = (uBhat + uChat)/2.0
+     
+     u1hat = b1/a1
+     u4hat = b4/a4
+     
+     d2 = (dA + dB)/2.0
+     d3 = (dB + dC)/2.0
+     
+     # Using Rhie-Chow interpolation, calculate face star velocities
      
      # Calculate residual for the continuity equations
      c_residual = (abs(uA - uLB) + abs(uB - uA) + abs(uRB - uB))
