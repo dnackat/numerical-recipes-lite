@@ -9,18 +9,25 @@ import numpy as np
 #import matplotlib.pyplot as plt
 
 # Given parameters
-uLB = 1.0 # Velocity at left boundary (inflow) in m/s
-uRB = 1.0 # Velocity at right boundary (outflow) in m/s
+u1 = 1.0 # Velocity at left boundary (inflow) in m/s
+p4 = 10.0 # Pressure at right boundary (outflow) in N/m2
 rho = 1000 # Density of fluid in kg/m3
 C = 0.1 # Constant of porosity in 1/m
 L = 0.3 # Length of the domain in m
 
 # Initial guess for SIMPLE scheme
 uA = 0.5
+u2 = 0.5
 uB = 0.5
-p1 = 0.0
-p2 = 0.0
-p3 = 0.0
+u3 = 0.5
+uC = 0.5
+u4 = 0.5
+p1 = 10.0
+pA = 10.0
+p2 = 10.0
+pB = 10.0
+p3 = 10.0
+pC = 10.0
 
 # Only velocity BCs are given, so set one of the pressue corrections to zero
 p3prime = 0.0
@@ -31,8 +38,8 @@ dx = L/numcells
 
 # Under-relaxation and tolerance for convergence
 tolerance = 1.e-6 
-alphaU = 0.9    # URF for x-velocity (no relaxation if set equal to 1)
-alphaP = 0.8     # URF for pressure (no relaxation if set equal to 1)
+alphaU = 1.0    # URF for x-velocity (no relaxation if set equal to 1)
+alphaP = 1.0     # URF for pressure (no relaxation if set equal to 1)
 
 # Maximum iterations permitted
 maxiter = 100
@@ -41,14 +48,21 @@ maxiter = 100
 for i in range(maxiter):
      
      # Calculate/update momentum coefficients
-     aA = C*rho*uA*dx
+     aA = C*rho*uA*dx/alphaU
+     bA = (1.0 - alphaU)*aA*uA
      dA = 1./aA
-     aB = C*rho*uB*dx
+     
+     aB = C*rho*uB*dx/alphaU
+     bB = (1.0 - alphaU)*aB*uB
      dB = 1./aB
      
-     # Constants, b
-     bA = 0.5*rho*C*uA**2*dx
-     bB = 0.5*rho*C*uB**2*dx
+     aC = C*rho*uC*dx/alphaU
+     bC = (1.0 - alphaU)*aC*uC
+     dC = 1./aC
+     
+     a1 = C*rho*uB*dx/(2.0*alphaU)
+     b1 = (1.0 - alphaU)*a1*u1
+     d1 = 1./a1
      
      # Calculate residual for the momentum equations
      u_residual = abs(uA*aA/alphaU - ((p1 - p2) + bA + uA*aA*(1.0 - alphaU)/alphaU)) + \
