@@ -43,6 +43,8 @@ alphaP = 1.0     # URF for pressure (no relaxation if set equal to 1)
 
 # Maximum iterations permitted
 maxiter = 100
+u_residual = 10.0
+c_residual = 10.0
 
 # Begin the main loop 
 for i in range(maxiter):
@@ -94,47 +96,62 @@ for i in range(maxiter):
      d3 = (dB + dC)/2.0
      
      # Using Rhie-Chow interpolation, calculate face star velocities
-     
-     # Calculate residual for the continuity equations
-     c_residual = (abs(uA - uLB) + abs(uB - uA) + abs(uRB - uB))
-     c_residual = c_residual/(0.5*((abs(uA) + abs(uB - uA) + abs(uB)))) # Normalize
+     u2 = u2hat + d2*(pA - pB)
+     u3 = u3hat + d3*(pB - pC)
      
      # Check for convergence
      if (u_residual + c_residual < tolerance):
           print("\n")
           print("=============================================================================")
-          print("Converged solution is: p1 = {:.2f}, p2 = {:.2f}, p3 = {:.2f}, uA = {:.2f}, uB = {:.2f}\n".format(p1, p2, p3, uA, uB))
+          print("Converged solution is: uA = {:.2f}, uB = {:.2f}, uC = {:.2f}, \n u1 = {:.2f}, u2 = {:.2f}, u3 = {:.2f}, u4 = {:.2f}, \n p1 = {:.2f}, p4 = {:.2f}, \n pA = {:.2f}, pB = {:.2f}, pC = {:.2f}, \n".format(uA, uB, uC, u1, u2, u3, u4, p1, p4, pA, pB, pC))
           print("=============================================================================")
           print("\n")
           break
-                
      
+	 # Solve pressure correction equation
      # Solve the linear system for pprimes
-     coeffMatrix = np.array([[dA, -dA], [-dA, dA + dB]]) 
-     bVector = np.array([[uLB - uA],[uA - uB + dB*p3]])
+     coeffMatrix = np.array([[d2, -d2, 0.],[-d2, d2 + d3, -d3],[0., d3, -d3]]) 
+     bVector = np.array([[u1 - u2],[u2 - u3],[u4 - u3]])
      
-     p1prime, p2prime = np.linalg.solve(coeffMatrix, bVector)
-     p1prime = p1prime.item()
-     p2prime = p2prime.item()
+     pAprime, pBprime, pCprime = np.linalg.solve(coeffMatrix, bVector)
+     pAprime = pAprime.item()
+     pBprime = pBprime.item()
+     pCprime = pCprime.item()
+	 
+	 # Update boundary pressure corrections
+     p1prime = pAprime
+     p2prime = (pAprime + pBprime)/2.0
+     p3prime = (pBprime + pCprime)/2.0
+	 
+	 # Correct face velocities
+     u2prime = d2*(pAprime - pBprime)
+     u2 = u2 + u2prime
      
-     # Correct the velocities and pressures
-     uAprime = dA*(p1prime - p2prime)
-     uBprime = dB*(p2prime - p3prime)
-     uA = uA + uAprime
-     uB = uB + uBprime
-     p1 = p1 + alphaP*p1prime
-     p2 = p2 + alphaP*p2prime
-     p3 = p3 + alphaP*p3prime
+     u3prime = d3*(pBprime - pCprime)
+     u3 = u3 + u3prime
      
-     # Check if continuity is satisfied 
-     cont1 = uA - uLB
-     cont2 = uB - uA
-     cont3 = uRB - uB
+     u4prime = d4*pCprime
+     u4 = u4 + u4prime
+	
+	 # Correct cell pressures
+     pA = pA + alphaP*pAprime
+     pB = pB + alphaP*pBprime
+     pC = pC + alphaP*pCprime
+	
+	 # Correct cell velocities to improve convergence
+     uA = uA + dA*(p1prime - p2prime)
+     uB = uB + dB*(p2prime - p3prime)
+     uC = uC + dC*p3prime # p4 is given, so p4prime is zero
+    	
+     # Update face pressures from boundary-cell momentum equations
+     p1 = pA + (u1 - u1hat)/d1
+     p2 = (pA + pB)/2.0
+     p3 = (pB + pC)/2.0
      
      # Output 
      if i == 0:
           print("----------------------------------------------------------------------")
-          print("It |  uA \t uB \t    p1 \t   p2 \t  p3  \t    u_res       cont_res")
+          print("It |  uA \t uB \t uC \t  pA \t   pB \t  pC  \t    u_res       cont_res")
           print("----------------------------------------------------------------------")
           
-     print("{:2d} | {:.3f} |  {:.3f} |  {:.3f} |{:.3f} |{:.3f} |  {:1.3e} |  {:1.3e}".format(i, uA, uB, p1, p2, p3, u_residual, c_residual))  
+     print("{:2d} | {:.3f} |  {:.3f} |  {:.3f} | {:.3f} |{:.3f} |{:.3f} |  {:1.3e} |  {:1.3e}".format(i, uA, uB, uC, pA, pB, pC, u_residual, c_residual))  
