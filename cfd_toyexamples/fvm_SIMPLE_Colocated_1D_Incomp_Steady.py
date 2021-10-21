@@ -38,8 +38,8 @@ dx = L/numcells
 
 # Under-relaxation and tolerance for convergence
 tolerance = 1.e-6 
-alphaU = 1.0    # URF for x-velocity (no relaxation if set equal to 1)
-alphaP = 1.0     # URF for pressure (no relaxation if set equal to 1)
+alphaU = 0.8    # URF for x-velocity (no relaxation if set equal to 1)
+alphaP = 0.7     # URF for pressure (no relaxation if set equal to 1)
 
 # Maximum iterations permitted
 maxiter = 100
@@ -63,11 +63,11 @@ for i in range(maxiter):
      dC = 1./aC
      
      a1 = C*rho*u1*dx/(2.0*alphaU)
-     b1 = 0.5*rho*C*u1**2*dx + (1.0 - alphaU)*a1*u1
+     b1 = 0.25*rho*C*u1**2*dx + (1.0 - alphaU)*a1*u1
      d1 = 1./a1
      
      a4 = C*rho*u4*dx/(2.0*alphaU)
-     b4 = 0.5*rho*C*u4**2*dx + (1.0 - alphaU)*a4*u4
+     b4 = 0.25*rho*C*u4**2*dx + (1.0 - alphaU)*a4*u4
      d4 = 1./a4
      
      # Calculate residual for the momentum equations
@@ -98,11 +98,13 @@ for i in range(maxiter):
      # Using Rhie-Chow interpolation, calculate face star velocities
      u2 = u2hat + d2*(pA - pB)
      u3 = u3hat + d3*(pB - pC)
+     u4 = u4hat + d4*(pC - p4)
      
      # Check for convergence
      if (u_residual + c_residual < tolerance):
           print("\n")
           print("=============================================================================")
+          print("The solution is converged in",i,"iterations.\n")
           print("Converged solution is: uA = {:.2f}, uB = {:.2f}, uC = {:.2f}, \n u1 = {:.2f}, u2 = {:.2f}, u3 = {:.2f}, u4 = {:.2f}, \n p1 = {:.2f}, p4 = {:.2f}, \n pA = {:.2f}, pB = {:.2f}, pC = {:.2f}, \n".format(uA, uB, uC, u1, u2, u3, u4, p1, p4, pA, pB, pC))
           print("=============================================================================")
           print("\n")
@@ -110,8 +112,8 @@ for i in range(maxiter):
      
 	 # Solve pressure correction equation
      # Solve the linear system for pprimes
-     coeffMatrix = np.array([[d2, -d2, 0.],[-d2, d2 + d3, -d3],[0., d3, -d3]]) 
-     bVector = np.array([[u1 - u2],[u2 - u3],[u4 - u3]])
+     coeffMatrix = np.array([[d2, -d2, 0.],[-d2, d2 + d3, -d3],[0., -d3, d3 + d4]]) 
+     bVector = np.array([[u1 - u2],[u2 - u3],[u3 - u4]])
      
      pAprime, pBprime, pCprime = np.linalg.solve(coeffMatrix, bVector)
      pAprime = pAprime.item()
@@ -147,6 +149,10 @@ for i in range(maxiter):
      p1 = pA + (u1 - u1hat)/d1
      p2 = (pA + pB)/2.0
      p3 = (pB + pC)/2.0
+     
+     # Calculate continuity residual
+     c_residual = abs(u1 - u2) + abs(u2 - u3) + abs(u3 - u4)
+     c_residual = c_residual/(0.5*(u1 + u2 + u3))
      
      # Output 
      if i == 0:
