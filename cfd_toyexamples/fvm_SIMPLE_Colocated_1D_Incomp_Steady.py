@@ -63,11 +63,11 @@ for i in range(maxiter):
      dC = 1./aC
      
      a1 = C*rho*u1*dx/(2.0*alphaU)
-     b1 = 0.25*rho*C*u1**2*dx + (1.0 - alphaU)*a1*u1
+     b1 = 0.5*rho*C*u1**2*(dx/2.0) + (1.0 - alphaU)*a1*u1
      d1 = 1./a1
      
      a4 = C*rho*u4*dx/(2.0*alphaU)
-     b4 = 0.25*rho*C*u4**2*dx + (1.0 - alphaU)*a4*u4
+     b4 = 0.5*rho*C*u4**2*(dx/2.0) + (1.0 - alphaU)*a4*u4
      d4 = 1./a4
      
      # Calculate residual for the momentum equations
