@@ -66,7 +66,7 @@ for i in range(maxiter):
      
      # Calculate residual for the continuity equations
      c_residual = (abs(uA - uLB) + abs(uB - uA) + abs(uRB - uB))
-     c_residual = c_residual/(0.5*((abs(uA) + abs(uB - uA) + abs(uB)))) # Normalize
+     c_residual = c_residual/(0.5*((abs(uA) + abs(uB)))) # Normalize
      
      # Check for convergence
      if (u_residual + c_residual < tolerance):
