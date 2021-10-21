@@ -105,12 +105,11 @@ for i in range(maxiter):
           print("\n")
           print("=============================================================================")
           print("The solution is converged in",i,"iterations.\n")
-          print("Converged solution is: uA = {:.2f}, uB = {:.2f}, uC = {:.2f}, \n u1 = {:.2f}, u2 = {:.2f}, u3 = {:.2f}, u4 = {:.2f}, \n p1 = {:.2f}, p4 = {:.2f}, \n pA = {:.2f}, pB = {:.2f}, pC = {:.2f}, \n".format(uA, uB, uC, u1, u2, u3, u4, p1, p4, pA, pB, pC))
+          print("Converged solution is:\n uA = {:.2f}, uB = {:.2f}, uC = {:.2f}, \n u1 = {:.2f}, u2 = {:.2f}, u3 = {:.2f}, u4 = {:.2f}, \n p1 = {:.2f}, p4 = {:.2f}, \n pA = {:.2f}, pB = {:.2f}, pC = {:.2f}, \n".format(uA, uB, uC, u1, u2, u3, u4, p1, p4, pA, pB, pC))
           print("=============================================================================")
           print("\n")
           break
-     
-	 # Solve pressure correction equation
+
      # Solve the linear system for pprimes
      coeffMatrix = np.array([[d2, -d2, 0.],[-d2, d2 + d3, -d3],[0., -d3, d3 + d4]]) 
      bVector = np.array([[u1 - u2],[u2 - u3],[u3 - u4]])
@@ -132,7 +131,7 @@ for i in range(maxiter):
      u3prime = d3*(pBprime - pCprime)
      u3 = u3 + u3prime
      
-     u4prime = d4*pCprime
+     u4prime = d4*pCprime # p4 is given, so p4prime is zero
      u4 = u4 + u4prime
 	
 	 # Correct cell pressures
