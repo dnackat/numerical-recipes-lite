@@ -4,6 +4,10 @@
 Created on Wed Oct 20 22:39:07 2021
 
 @author: dileepn
+
+Solution of 1D, steady, incompressible flow through a porous medium on a colocated  
+grid along with SIMPLE scheme for pressure-velocity coupling along with Rhie-Chow 
+momentum interpolation.
 """
 import numpy as np
 #import matplotlib.pyplot as plt
