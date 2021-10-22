@@ -29,9 +29,6 @@ pB = 10.0
 p3 = 10.0
 pC = 10.0
 
-# Only velocity BCs are given, so set one of the pressue corrections to zero
-p3prime = 0.0
-
 # Geometry of flow domain
 numcells = 3
 dx = L/numcells
