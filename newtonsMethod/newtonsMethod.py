@@ -9,7 +9,7 @@ Newton's method: A toy example
 """
 import numpy as np
 
-f = lambda x: np.cos(x) - x
+f = lambda x: 2*x**2 - 6*x - 9
 
 def fn(f,x):
      """
@@ -90,7 +90,7 @@ def newt(f,x0,tol=1e-5,iters=100):
           # Check for convergence
           if i > 0 and abs(x[i] - x[i-1]) < tol:
                print("\nThe solution is: {:.4f}\n".format(x[i]))
-               print("Sir Isaac needed", i,"iterations to reach that solution.\n")
+               print("Sir Isaac needed", i,"steps to reach this solution.\n")
                return
           
      print("\nSorry, I couldn't find a solution in",iters,"iterations. Consider lowering convergence tolerance.")
